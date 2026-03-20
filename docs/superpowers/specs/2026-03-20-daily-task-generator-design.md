@@ -51,8 +51,6 @@ GitHub Repo
 ```json
 {
   "start_date": "2026-03-21",
-  "current_week": 1,
-  "current_scene": "Self-introduction & small talk",
   "scene_ratings": {},
   "daily_log": {
     "2026-03-21": {
@@ -67,11 +65,20 @@ GitHub Repo
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `start_date` | ISO date string | Plan start date, used to compute current week and day |
-| `current_week` | int | Current week number (1–16) |
-| `current_scene` | string | Current two-week scene name |
-| `scene_ratings` | object | Scene name → rating (1–5), filled at biweekly check-in |
+| `start_date` | ISO date string | Plan start date. All temporal values (current week, current scene, day-within-week) are computed from this field at runtime — never stored separately. |
+| `scene_ratings` | object | Scene name → rating (1–5), written by `mark_done.py rating <N>` |
 | `daily_log` | object | Date → `{ completed: string[], skipped: bool }` |
+
+**Derived computations (calculated from `start_date` at runtime, never stored):**
+
+| Value | Formula |
+|-------|---------|
+| `plan_day` | `(today - start_date).days + 1` (1-indexed, overall plan day) |
+| `current_week` | `ceil(plan_day / 7)` |
+| `day_within_week` | `((plan_day - 1) % 7) + 1` — resets 1–7 each week; shown as `Day {D}` in push headers |
+| `current_scene` | Look up `current_week` in the scene roadmap table (weeks 1–2 → scene 1, etc.) |
+| `scene_cycle_day` | `((plan_day - 1) % 14) + 1` — day within the current 2-week scene cycle (1–14) |
+| `is_biweekly_checkin` | `scene_cycle_day == 14` |
 
 ### `plan/config.json`
 
@@ -99,7 +106,49 @@ GitHub Repo
 | 9–10  | Reporting progress & giving feedback | Business English Pod | HBR |
 | 11–12 | Expressing emotions & storytelling | 6 Minute English | BBC Worklife |
 | 13–14 | Asking questions & confirming information | The English We Speak | Reddit r/cscareerquestions |
-| 15–16 | Free review & weak scene reinforcement | (lowest-rated scene's source) | (lowest-rated scene's source) |
+| 15–16 | Free review & weak scene reinforcement | (resolved at runtime — see below) | (resolved at runtime — see below) |
+
+**Weeks 15–16 scene resolution rule:**
+
+When `current_week` is 15 or 16, `generate_task.py` selects the reinforcement scene as follows:
+
+1. Look up all scenes that have an entry in `scene_ratings`
+2. Select the scene with the lowest rating value
+3. If multiple scenes share the lowest rating, select the one with the earlier week number
+4. If no ratings exist at all (user skipped all check-ins), default to Scene 1 (Self-introduction & small talk)
+
+The selected scene's podcast and article source are used unchanged from the scene roadmap.
+
+---
+
+## Inter-Process Message Contract
+
+Scripts communicate via stdout/stdin using a JSON envelope. `generate_task.py` and `check_evening.py` write to stdout; `push_bark.py` reads from stdin.
+
+**Schema:**
+
+```json
+{
+  "title": "string — notification title (max 50 chars)",
+  "body": "string — notification body text",
+  "url": "string | null — optional deep-link URL (unused currently, set to null)"
+}
+```
+
+**Example (morning):**
+
+```json
+{
+  "title": "📅 Week 1 · Day 3 | Self-introduction & small talk",
+  "body": "✅ Review (5min)\nOpen Anki...\n\n🎧 Input (15min)\n...",
+  "url": null
+}
+```
+
+`push_bark.py` maps these fields to the Bark API call:
+- `title` → Bark `title` parameter
+- `body` → Bark `body` parameter
+- `url` → Bark `url` parameter (omitted from request if null)
 
 ---
 
@@ -171,6 +220,10 @@ python scripts/mark_done.py rating 4   # Submit biweekly scene rating (1-5)
 
 Each command updates `state.json` and runs `git commit && git push` automatically.
 
+**Validation rules enforced by `mark_done.py`:**
+- Block names must be one of: `review`, `input`, `extraction`, `output`, `all`, `skip`
+- `rating` argument must be an integer in the range [1, 5]; any other value exits with a clear error message and makes no changes to `state.json`
+
 ---
 
 ## GitHub Actions Workflows
@@ -212,6 +265,19 @@ jobs:
         env:
           BARK_TOKEN: ${{ secrets.BARK_TOKEN }}
 ```
+
+---
+
+## Error Handling
+
+| Failure scenario | Behavior |
+|-----------------|----------|
+| Bark API returns non-2xx | Script exits with non-zero code; GitHub Actions marks job as failed; learner sees failed workflow in GitHub UI |
+| `state.json` missing or malformed | Script exits non-zero with descriptive error message; no push sent |
+| `mark_done.py` fails to `git push` (e.g., network error, conflict) | Script prints error and exits non-zero; `state.json` local change is preserved; learner retries manually |
+| `BARK_TOKEN` secret not set | `push_bark.py` exits non-zero immediately with message "BARK_TOKEN environment variable not set" |
+
+All scripts must exit non-zero on failure. Workflows use `continue-on-error: false` (GitHub default) so failures are visible in the Actions UI.
 
 ---
 

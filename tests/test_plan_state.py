@@ -118,6 +118,10 @@ def test_save_state_writes_json(tmp_path):
     loaded = json.loads(state_file.read_text())
     assert loaded["start_date"] == "2026-03-21"
 
+def test_save_state_oserror_raises():
+    with pytest.raises(SystemExit):
+        save_state({"start_date": "2026-03-21", "scene_ratings": {}, "daily_log": {}}, "/nonexistent/dir/state.json")
+
 def test_load_state_missing_file_raises():
     with pytest.raises(SystemExit):
         load_state("/nonexistent/state.json")

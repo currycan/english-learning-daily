@@ -19,7 +19,6 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Generate and push morning task
-        run: python scripts/generate_task.py | python scripts/push_bark.py morning
+        run: PYTHONPATH=. python scripts/generate_task.py | PYTHONPATH=. python scripts/push_bark.py morning
         env:
           BARK_TOKEN: ${{ secrets.BARK_TOKEN }}
-          PYTHONPATH: .

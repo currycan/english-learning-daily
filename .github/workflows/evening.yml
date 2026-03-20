@@ -19,7 +19,6 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Generate and push evening summary
-        run: python scripts/check_evening.py | python scripts/push_bark.py evening
+        run: PYTHONPATH=. python scripts/check_evening.py | PYTHONPATH=. python scripts/push_bark.py evening
         env:
           BARK_TOKEN: ${{ secrets.BARK_TOKEN }}
-          PYTHONPATH: .

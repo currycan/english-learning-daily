@@ -22,3 +22,4 @@ jobs:
         run: python scripts/check_evening.py | python scripts/push_bark.py evening
         env:
           BARK_TOKEN: ${{ secrets.BARK_TOKEN }}
+          PYTHONPATH: .

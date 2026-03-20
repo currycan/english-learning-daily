@@ -1,0 +1,24 @@
+name: Evening push
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 13:00 UTC = 21:00 BJT (UTC+8)
+  workflow_dispatch:         # Allow manual trigger for testing
+
+jobs:
+  push-evening:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate and push evening summary
+        run: python scripts/check_evening.py | python scripts/push_bark.py evening
+        env:
+          BARK_TOKEN: ${{ secrets.BARK_TOKEN }}

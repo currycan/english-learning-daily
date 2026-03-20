@@ -150,6 +150,8 @@ Scripts communicate via stdout/stdin using a JSON envelope. `generate_task.py` a
 - `body` → Bark `body` parameter
 - `url` → Bark `url` parameter (omitted from request if null)
 
+`push_bark.py` accepts a single positional argument (`morning` or `evening`). This argument is informational only — used for logging purposes — and does not alter the Bark API call or the JSON parsing logic.
+
 ---
 
 ## Push Content Format
@@ -188,7 +190,9 @@ Today's budget: 35-45 min
 
 Completion: {N}%
 
-Tomorrow: Week {N} · Day {D+1}
+Tomorrow: Week {N} · Day {D+1}   ← when day_within_week < 7
+Tomorrow: Week {N+1} · Day 1     ← when day_within_week == 7 and current_week < 16
+(omit tomorrow line if current_week == 16 and day_within_week == 7 — plan complete)
 {motivational nudge if completion < 50%}
 ```
 
@@ -223,6 +227,7 @@ Each command updates `state.json` and runs `git commit && git push` automaticall
 **Validation rules enforced by `mark_done.py`:**
 - Block names must be one of: `review`, `input`, `extraction`, `output`, `all`, `skip`
 - `rating` argument must be an integer in the range [1, 5]; any other value exits with a clear error message and makes no changes to `state.json`
+- `mark_done.py rating <N>` derives `current_scene` from `start_date` and today's date using the same formula as `generate_task.py`, then writes `state.json: scene_ratings[current_scene_name] = N`. The key must exactly match the scene name in the Scene Roadmap table (e.g., `"Self-introduction & small talk"`), so that the Weeks 15–16 resolution rule can look it up correctly.
 
 ---
 

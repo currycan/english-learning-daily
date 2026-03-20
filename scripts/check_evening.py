@@ -20,6 +20,16 @@ def build_evening_payload(state: dict, today: date = None) -> dict:
 
     start = date.fromisoformat(state["start_date"])
     plan_day = compute_plan_day(start, today)
+
+    if plan_day <= 0:
+        days_until = (start - today).days
+        label = "tomorrow" if days_until == 1 else f"in {days_until} days"
+        return {
+            "title": "🌙 Plan starts " + label,
+            "body": f"Your English learning plan begins on {state['start_date']}. Rest up!",
+            "url": None,
+        }
+
     week = compute_current_week(plan_day)
     day = compute_day_within_week(plan_day)
     scene = get_scene_for_week(week, state.get("scene_ratings", {}))

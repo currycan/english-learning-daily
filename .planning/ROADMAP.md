@@ -13,7 +13,7 @@ Three phases deliver an automated daily English learning pipeline. Phase 1 estab
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - CI scaffold, shared utilities, git commit, and timezone/idempotency infrastructure (completed 2026-03-22)
-- [ ] **Phase 2: RSS Fetch** - Article fetching from VOA/BBC RSS with validation and Article Envelope output
+- [x] **Phase 2: RSS Fetch** - Article fetching from VOA/BBC RSS with validation and Article Envelope output (completed 2026-03-22)
 - [ ] **Phase 3: AI Pipeline** - AI exercise generation, Markdown rendering, and complete end-to-end pipeline
 
 ## Phase Details
@@ -67,5 +67,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete   | 2026-03-22 |
-| 2. RSS Fetch | 1/2 | In Progress|  |
+| 2. RSS Fetch | 2/2 | Complete   | 2026-03-22 |
 | 3. AI Pipeline | 0/TBD | Not started | - |

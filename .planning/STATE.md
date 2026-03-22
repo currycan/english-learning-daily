@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-22T17:11:02.259Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-22T17:13:44.772Z"
 last_activity: 2026-03-22 — Roadmap created
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P01 | 2 | 1 tasks | 2 files |
 | Phase 01-foundation P02 | 3min | 2 tasks | 3 files |
 | Phase 02-rss-fetch P01 | 8min | 2 tasks | 3 files |
+| Phase 02-rss-fetch P02 | 3min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,7 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Idempotency guard uses path.exists() check and sys.exit(0); git_commit_and_push takes (path, today) args for testability; Workflow permissions: contents: write at job level
 - [Phase 02-rss-fetch]: newsinlevels.com/feed confirmed as ONLY verified primary RSS URL returning 800+ char body via content:encoded
 - [Phase 02-rss-fetch]: BBC Learning English fallback kept per locked user decision; retry logic handles gracefully if it also returns short content
+- [Phase 02-rss-fetch]: Used HTMLParser subclass (_TextExtractor) instead of regex for HTML cleaning — handles nested tags and entities correctly
 
 ### Pending Todos
 
@@ -82,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T17:11:02.257Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-03-22T17:13:44.770Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None

@@ -1,0 +1,30 @@
+name: Daily content
+
+on:
+  schedule:
+    - cron: '0 22 * * *'   # 22:00 UTC = 06:00 BJT (UTC+8)
+  workflow_dispatch:         # Allow manual trigger for testing
+
+jobs:
+  generate-content:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # Required for git push via GITHUB_TOKEN
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit daily content
+        run: python -m scripts.commit_content

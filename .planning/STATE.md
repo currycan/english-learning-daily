@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-foundation-01-01-PLAN.md
-last_updated: "2026-03-22T16:05:00.009Z"
+stopped_at: Completed 01-foundation-01-02-PLAN.md
+last_updated: "2026-03-22T16:09:04.997Z"
 last_activity: 2026-03-22 — Roadmap created
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 2 | 1 tasks | 2 files |
+| Phase 01-foundation P02 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,7 @@ Recent decisions affecting current work:
 - [Init]: One Claude API call per day — single structured JSON prompt covering vocabulary + chunks + questions
 - [Phase 01-foundation]: Use datetime.now(tz=BEIJING_TZ).date() not date.today() to correctly derive Beijing date on UTC runners
 - [Phase 01-foundation]: Patch datetime in module namespace for testability: monkeypatch.setattr(cu, 'datetime', FakeDatetime)
+- [Phase 01-foundation]: Idempotency guard uses path.exists() check and sys.exit(0); git_commit_and_push takes (path, today) args for testability; Workflow permissions: contents: write at job level
 
 ### Pending Todos
 
@@ -77,6 +79,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T16:05:00.008Z
-Stopped at: Completed 01-foundation-01-01-PLAN.md
+Last session: 2026-03-22T16:09:04.995Z
+Stopped at: Completed 01-foundation-01-02-PLAN.md
 Resume file: None

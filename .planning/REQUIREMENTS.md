@@ -58,24 +58,24 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FTCH-01 | Phase 1 | Pending |
-| FTCH-02 | Phase 1 | Pending |
-| FTCH-03 | Phase 1 | Pending |
 | CI-01 | Phase 1 | Pending |
 | CI-02 | Phase 1 | Pending |
-| AIGEN-01 | Phase 2 | Pending |
-| AIGEN-02 | Phase 2 | Pending |
-| AIGEN-03 | Phase 2 | Pending |
-| AIGEN-04 | Phase 2 | Pending |
-| OUT-01 | Phase 2 | Pending |
-| OUT-02 | Phase 2 | Pending |
-| OUT-03 | Phase 2 | Pending |
+| FTCH-01 | Phase 2 | Pending |
+| FTCH-02 | Phase 2 | Pending |
+| FTCH-03 | Phase 2 | Pending |
+| AIGEN-01 | Phase 3 | Pending |
+| AIGEN-02 | Phase 3 | Pending |
+| AIGEN-03 | Phase 3 | Pending |
+| AIGEN-04 | Phase 3 | Pending |
+| OUT-01 | Phase 3 | Pending |
+| OUT-02 | Phase 3 | Pending |
+| OUT-03 | Phase 3 | Pending |
 
 **Coverage:**
-- v1 requirements: 10 total
-- Mapped to phases: 10
+- v1 requirements: 12 total
+- Mapped to phases: 12
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-22*
-*Last updated: 2026-03-22 after initial definition*
+*Last updated: 2026-03-22 after roadmap creation*

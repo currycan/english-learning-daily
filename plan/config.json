@@ -2,5 +2,10 @@
   "morning_hour": 7,
   "evening_hour": 21,
   "weekly_recording_day": "saturday",
-  "timezone": "Asia/Shanghai"
+  "timezone": "Asia/Shanghai",
+  "content_feeds": {
+    "primary_url": "https://www.newsinlevels.com/feed",
+    "fallback_url": "https://www.bbc.co.uk/learningenglish/english/features/lingohack/feed.rss",
+    "content_topics": ["AI", "artificial intelligence", "technology", "international", "economy", "science", "climate"]
+  }
 }

@@ -7,9 +7,9 @@
 
 ### Fetch
 
-- [ ] **FTCH-01**: System fetches one article daily from VOA Special English RSS feed
-- [ ] **FTCH-02**: System falls back to BBC Learning English RSS if VOA fetch fails
-- [ ] **FTCH-03**: System extracts article title, full body text, and source URL from the feed
+- [x] **FTCH-01**: System fetches one article daily from VOA Special English RSS feed
+- [x] **FTCH-02**: System falls back to BBC Learning English RSS if VOA fetch fails
+- [x] **FTCH-03**: System extracts article title, full body text, and source URL from the feed
 
 ### AI Generation
 
@@ -27,7 +27,7 @@
 ### CI Workflow
 
 - [x] **CI-01**: GitHub Actions workflow runs on a daily cron schedule
-- [ ] **CI-02**: Pipeline exits non-zero and marks the CI job failed if RSS fetch or AI generation fails
+- [x] **CI-02**: Pipeline exits non-zero and marks the CI job failed if RSS fetch or AI generation fails
 
 ## v2 Requirements
 
@@ -59,10 +59,10 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | CI-01 | Phase 1 | Complete |
-| CI-02 | Phase 1 | Pending |
-| FTCH-01 | Phase 2 | Pending |
-| FTCH-02 | Phase 2 | Pending |
-| FTCH-03 | Phase 2 | Pending |
+| CI-02 | Phase 1 | Complete |
+| FTCH-01 | Phase 2 | Complete |
+| FTCH-02 | Phase 2 | Complete |
+| FTCH-03 | Phase 2 | Complete |
 | AIGEN-01 | Phase 3 | Pending |
 | AIGEN-02 | Phase 3 | Pending |
 | AIGEN-03 | Phase 3 | Pending |

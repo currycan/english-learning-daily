@@ -27,7 +27,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. A test run commits a placeholder file to `content/` with the correct Beijing-date filename (YYYY-MM-DD.md)
   3. Running the workflow twice on the same day does not create a duplicate commit — the second run exits 0 cleanly
   4. A simulated failure (non-zero script exit) causes the CI job to be marked failed in GitHub Actions
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — shared utilities: get_beijing_date(), content_path(), Beijing TZ constants (TDD)
+- [ ] 01-02-PLAN.md — commit_content.py placeholder + idempotency guard + daily-content.yml CI workflow (TDD + auto)
 
 ### Phase 2: RSS Fetch
 **Goal**: The system reliably fetches one real English article per day from VOA Special English (BBC fallback), validates it, and emits a well-formed Article Envelope JSON
@@ -58,6 +62,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/2 | Not started | - |
 | 2. RSS Fetch | 0/TBD | Not started | - |
 | 3. AI Pipeline | 0/TBD | Not started | - |

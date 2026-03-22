@@ -19,7 +19,7 @@ created: 2026-03-23
 |----------|-------|
 | **Framework** | pytest 7.x |
 | **Config file** | pytest.ini or pyproject.toml (existing) |
-| **Quick run command** | `pytest tests/test_fetch_article.py -v` |
+| **Quick run command** | `pytest tests/test_feed_article.py -v` |
 | **Full suite command** | `pytest -v` |
 | **Estimated runtime** | ~10 seconds |
 
@@ -27,7 +27,7 @@ created: 2026-03-23
 
 ## Sampling Rate
 
-- **After every task commit:** Run `pytest tests/test_fetch_article.py -v`
+- **After every task commit:** Run `pytest tests/test_feed_article.py -v`
 - **After every plan wave:** Run `pytest -v`
 - **Before `/gsd:verify-work`:** Full suite must be green
 - **Max feedback latency:** 15 seconds
@@ -38,11 +38,11 @@ created: 2026-03-23
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 2-01-01 | 01 | 0 | FTCH-01 | unit | `pytest tests/test_fetch_article.py::test_article_envelope_schema -v` | ❌ W0 | ⬜ pending |
-| 2-01-02 | 01 | 1 | FTCH-01 | unit | `pytest tests/test_fetch_article.py::test_voa_fetch_returns_envelope -v` | ❌ W0 | ⬜ pending |
-| 2-01-03 | 01 | 1 | FTCH-02 | unit | `pytest tests/test_fetch_article.py::test_fallback_when_voa_fails -v` | ❌ W0 | ⬜ pending |
-| 2-01-04 | 01 | 1 | FTCH-03 | unit | `pytest tests/test_fetch_article.py::test_exits_nonzero_when_both_fail -v` | ❌ W0 | ⬜ pending |
-| 2-01-05 | 01 | 1 | FTCH-01 | unit | `pytest tests/test_fetch_article.py::test_body_min_200_chars -v` | ❌ W0 | ⬜ pending |
+| 2-01-01 | 01 | 0 | FTCH-01 | unit | `pytest tests/test_feed_article.py::test_article_envelope_schema -v` | ❌ W0 | ⬜ pending |
+| 2-01-02 | 01 | 1 | FTCH-01 | unit | `pytest tests/test_feed_article.py::test_voa_fetch_returns_envelope -v` | ❌ W0 | ⬜ pending |
+| 2-01-03 | 01 | 1 | FTCH-02 | unit | `pytest tests/test_feed_article.py::test_fallback_when_voa_fails -v` | ❌ W0 | ⬜ pending |
+| 2-01-04 | 01 | 1 | FTCH-03 | unit | `pytest tests/test_feed_article.py::test_exits_nonzero_when_both_fail -v` | ❌ W0 | ⬜ pending |
+| 2-01-05 | 01 | 1 | FTCH-01 | unit | `pytest tests/test_feed_article.py::test_body_min_200_chars -v` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -50,7 +50,7 @@ created: 2026-03-23
 
 ## Wave 0 Requirements
 
-- [ ] `tests/test_fetch_article.py` — stubs for FTCH-01, FTCH-02, FTCH-03
+- [ ] `tests/test_feed_article.py` — stubs for FTCH-01, FTCH-02, FTCH-03
 - [ ] `tests/conftest.py` — shared fixtures (mock feedparser responses)
 - [ ] Validate live feed URLs in `plan/config.json` before implementation
 

@@ -26,7 +26,7 @@
 
 ### CI Workflow
 
-- [ ] **CI-01**: GitHub Actions workflow runs on a daily cron schedule
+- [x] **CI-01**: GitHub Actions workflow runs on a daily cron schedule
 - [ ] **CI-02**: Pipeline exits non-zero and marks the CI job failed if RSS fetch or AI generation fails
 
 ## v2 Requirements
@@ -58,7 +58,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CI-01 | Phase 1 | Pending |
+| CI-01 | Phase 1 | Complete |
 | CI-02 | Phase 1 | Pending |
 | FTCH-01 | Phase 2 | Pending |
 | FTCH-02 | Phase 2 | Pending |

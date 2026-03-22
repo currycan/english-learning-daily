@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-22T15:47:43.839Z"
+stopped_at: Completed 01-foundation-01-01-PLAN.md
+last_updated: "2026-03-22T16:05:00.009Z"
 last_activity: 2026-03-22 — Roadmap created
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
 ---
 
@@ -50,6 +50,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01-foundation P01 | 2 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,8 @@ Recent decisions affecting current work:
 - [Init]: Use claude-3-5-haiku-20241022 (pinned) — cost-efficient at ~1,400 tokens/day
 - [Init]: VOA Special English as primary RSS source — already B1-B2 calibrated, no extra filtering needed
 - [Init]: One Claude API call per day — single structured JSON prompt covering vocabulary + chunks + questions
+- [Phase 01-foundation]: Use datetime.now(tz=BEIJING_TZ).date() not date.today() to correctly derive Beijing date on UTC runners
+- [Phase 01-foundation]: Patch datetime in module namespace for testability: monkeypatch.setattr(cu, 'datetime', FakeDatetime)
 
 ### Pending Todos
 
@@ -74,6 +77,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T15:47:43.838Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation/01-CONTEXT.md
+Last session: 2026-03-22T16:05:00.008Z
+Stopped at: Completed 01-foundation-01-01-PLAN.md
+Resume file: None

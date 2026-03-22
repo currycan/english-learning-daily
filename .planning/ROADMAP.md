@@ -42,7 +42,11 @@ Plans:
   2. When the VOA feed is unavailable (simulated), the script falls back to BBC Learning English and still emits a valid Article Envelope
   3. When both feeds fail, the script exits non-zero with a clear error message
   4. The emitted article body is at least 200 characters and contains natural English prose (not feed metadata or HTML tags)
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — TDD scaffold: 12 failing tests + feedparser dependency + config feed URLs (RED phase)
+- [ ] 02-02-PLAN.md — Implementation: scripts/feed_article.py with all 8 functions (GREEN phase)
 
 ### Phase 3: AI Pipeline
 **Goal**: Every day a complete English lesson Markdown file is committed to `content/YYYY-MM-DD.md` — containing the real article, 5-8 vocabulary entries, chunking expressions, and comprehension questions with answers
@@ -63,5 +67,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete   | 2026-03-22 |
-| 2. RSS Fetch | 0/TBD | Not started | - |
+| 2. RSS Fetch | 0/2 | Not started | - |
 | 3. AI Pipeline | 0/TBD | Not started | - |

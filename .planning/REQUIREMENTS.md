@@ -8,14 +8,14 @@
 
 ### Provider Abstraction
 
-- [ ] **PRVD-01**: 系统通过统一接口调用 AI 生成内容，业务逻辑与具体提供商解耦
-- [ ] **PRVD-02**: 用户可通过环境变量 `AI_PROVIDER=openai|anthropic` 切换提供商（运行时优先）
-- [ ] **PRVD-03**: 用户可在 `plan/config.json` 中设置 `ai_provider` 默认值，环境变量优先级更高
+- [x] **PRVD-01**: 系统通过统一接口调用 AI 生成内容，业务逻辑与具体提供商解耦
+- [x] **PRVD-02**: 用户可通过环境变量 `AI_PROVIDER=openai|anthropic` 切换提供商（运行时优先）
+- [x] **PRVD-03**: 用户可在 `plan/config.json` 中设置 `ai_provider` 默认值，环境变量优先级更高
 
 ### OpenAI Integration
 
-- [ ] **OAPI-01**: 系统使用 OpenAI gpt-4o-mini 生成与现有格式完全一致的词汇、分块表达、理解问答内容
-- [ ] **OAPI-02**: OpenAI 使用的模型可通过 `plan/config.json` 配置（默认 `gpt-4o-mini`）
+- [x] **OAPI-01**: 系统使用 OpenAI gpt-4o-mini 生成与现有格式完全一致的词汇、分块表达、理解问答内容
+- [x] **OAPI-02**: OpenAI 使用的模型可通过 `plan/config.json` 配置（默认 `gpt-4o-mini`）
 - [ ] **OAPI-03**: `OPENAI_API_KEY` 仅从环境变量 / GitHub Secrets 读取，不写入任何代码或配置文件
 
 ### Fallback
@@ -33,7 +33,7 @@
 
 ### Testing
 
-- [ ] **TEST-01**: OpenAI 提供商路径有对应单元测试，API 调用通过 mock 隔离
+- [x] **TEST-01**: OpenAI 提供商路径有对应单元测试，API 调用通过 mock 隔离
 - [ ] **TEST-02**: 降级逻辑有单元测试，覆盖主提供商失败 → 自动切换备用提供商的场景
 
 ## Future Requirements
@@ -65,13 +65,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PRVD-01 | Phase 4 | Pending |
-| PRVD-02 | Phase 4 | Pending |
-| PRVD-03 | Phase 4 | Pending |
-| OAPI-01 | Phase 4 | Pending |
-| OAPI-02 | Phase 4 | Pending |
+| PRVD-01 | Phase 4 | Complete |
+| PRVD-02 | Phase 4 | Complete |
+| PRVD-03 | Phase 4 | Complete |
+| OAPI-01 | Phase 4 | Complete |
+| OAPI-02 | Phase 4 | Complete |
 | OAPI-03 | Phase 4 | Pending |
-| TEST-01 | Phase 4 | Pending |
+| TEST-01 | Phase 4 | Complete |
 | FALL-01 | Phase 5 | Pending |
 | FALL-02 | Phase 5 | Pending |
 | FALL-03 | Phase 5 | Pending |

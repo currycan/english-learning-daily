@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Dual AI Provider
 status: planning
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-23T03:03:35.740Z"
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-23T03:22:58.284Z"
 last_activity: 2026-03-23 — v1.1 roadmap created; phases 4-6 defined
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 30
 ---
 
@@ -47,6 +47,9 @@ Key technical decisions carry forward:
 v1.1 decisions:
 - TEST-01 and TEST-02 embedded in implementation phases (4 and 5), not isolated
 - Fallback ordering: configured provider first → other provider (symmetric)
+- [Phase 04]: call_claude catches anthropic.APIError specifically (not bare Exception) — fixes v1.0 tech debt
+- [Phase 04]: openai.OpenAI() instantiated inside call_openai() for testability, mirrors anthropic pattern
+- [Phase 04]: CLAUDE_MODEL hardcoded in ai_provider.py as CLAUDE_MODEL constant, not in config
 
 ### Pending Todos
 
@@ -59,6 +62,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T03:03:35.739Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-provider-abstraction-openai-integration/04-CONTEXT.md
+Last session: 2026-03-23T03:22:58.283Z
+Stopped at: Completed 04-01-PLAN.md
+Resume file: None

@@ -170,3 +170,59 @@ def test_backup_provider_anthropic_returns_openai():
 
 def test_backup_provider_openai_returns_anthropic():
     assert ap._backup_provider("openai") == "anthropic"
+
+
+# ---------------------------------------------------------------------------
+# call_claude custom endpoint tests (TPROV-01, TPROV-02, TPROV-03, CONF-01–CONF-03, TEST-01, TEST-02)
+# ---------------------------------------------------------------------------
+
+
+def test_call_claude_uses_custom_base_url_and_auth_token(monkeypatch):
+    """TEST-01 / TPROV-01 / TPROV-02 / CONF-01 / CONF-02:
+    When ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN env vars are set,
+    anthropic.Anthropic() must be called with base_url and api_key."""
+    monkeypatch.setenv("ANTHROPIC_BASE_URL", "https://custom.example.com")
+    monkeypatch.setenv("ANTHROPIC_AUTH_TOKEN", "custom-token-123")
+    with patch("scripts.ai_provider.anthropic.Anthropic") as MockAnthropic:
+        mock_client = MagicMock()
+        MockAnthropic.return_value = mock_client
+        mock_client.messages.create.return_value = MagicMock(
+            content=[MagicMock(text="response")]
+        )
+        ap.call_claude("prompt")
+    MockAnthropic.assert_called_once_with(
+        base_url="https://custom.example.com",
+        api_key="custom-token-123",
+    )
+
+
+def test_call_claude_backward_compat_no_custom_config(monkeypatch):
+    """TEST-02 / TPROV-03:
+    When no custom env vars or kwargs are present, anthropic.Anthropic()
+    must be called with no arguments (identical to v1.1 behavior)."""
+    monkeypatch.delenv("ANTHROPIC_BASE_URL", raising=False)
+    monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
+    with patch("scripts.ai_provider.anthropic.Anthropic") as MockAnthropic:
+        mock_client = MagicMock()
+        MockAnthropic.return_value = mock_client
+        mock_client.messages.create.return_value = MagicMock(
+            content=[MagicMock(text="response")]
+        )
+        ap.call_claude("prompt")
+    MockAnthropic.assert_called_once_with()  # no args, no kwargs
+
+
+def test_call_claude_uses_config_base_url_when_no_env_var(monkeypatch):
+    """CONF-03:
+    When env vars are absent but base_url kwarg is passed to call_claude(),
+    anthropic.Anthropic() must be called with that base_url (config.json path)."""
+    monkeypatch.delenv("ANTHROPIC_BASE_URL", raising=False)
+    monkeypatch.delenv("ANTHROPIC_AUTH_TOKEN", raising=False)
+    with patch("scripts.ai_provider.anthropic.Anthropic") as MockAnthropic:
+        mock_client = MagicMock()
+        MockAnthropic.return_value = mock_client
+        mock_client.messages.create.return_value = MagicMock(
+            content=[MagicMock(text="response")]
+        )
+        ap.call_claude("prompt", base_url="https://config.example.com")
+    MockAnthropic.assert_called_once_with(base_url="https://config.example.com")

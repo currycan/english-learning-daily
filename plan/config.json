@@ -5,7 +5,7 @@
   "timezone": "Asia/Shanghai",
   "ai_provider": "anthropic",
   "openai_model": "gpt-4o-mini",
-  "claude_model": "opus",
+  "claude_model": "claude-haiku-4-5-20251001",
   "content_feeds": {
     "primary_url": "https://www.newsinlevels.com/feed",
     "fallback_url": "https://www.bbc.co.uk/learningenglish/english/features/lingohack/feed.rss",

@@ -39,9 +39,28 @@ def resolve_provider(config: dict) -> str:
     return provider
 
 
-def call_claude(prompt: str, max_tokens: int = 2048) -> str:
-    """Call Claude API. Returns response text. Raises ProviderError on API error."""
-    client = anthropic.Anthropic()
+def call_claude(
+    prompt: str,
+    max_tokens: int = 2048,
+    base_url: str | None = None,
+    auth_token: str | None = None,
+) -> str:
+    """Call Claude API. Returns response text. Raises ProviderError on API error.
+
+    base_url and auth_token enable third-party Claude-compatible endpoints.
+    Priority: env vars (ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN) > kwargs > SDK defaults.
+    Empty string is treated as absent (GitHub Actions returns "" for unset secrets).
+    """
+    # Resolve effective values: env var takes highest priority, then kwarg, then absent.
+    effective_url = os.environ.get("ANTHROPIC_BASE_URL") or base_url or ""
+    effective_key = os.environ.get("ANTHROPIC_AUTH_TOKEN") or auth_token or ""
+    # Only pass kwargs to Anthropic() when non-empty — avoids overriding SDK defaults with None/"".
+    kwargs: dict = {}
+    if effective_url:
+        kwargs["base_url"] = effective_url
+    if effective_key:
+        kwargs["api_key"] = effective_key
+    client = anthropic.Anthropic(**kwargs)
     try:
         response = client.messages.create(
             model=CLAUDE_MODEL,
@@ -81,7 +100,12 @@ def _dispatch(prompt: str, provider: str, model_config: dict, max_tokens: int) -
     """Route prompt to the named provider. Raises ProviderError on failure."""
     if provider == "openai":
         return call_openai(prompt, model=model_config["openai_model"], max_tokens=max_tokens)
-    return call_claude(prompt, max_tokens=max_tokens)
+    return call_claude(
+        prompt,
+        max_tokens=max_tokens,
+        base_url=model_config.get("anthropic_base_url"),
+        auth_token=model_config.get("anthropic_auth_token"),
+    )
 
 
 def call_ai(prompt: str, provider: str, model_config: dict, max_tokens: int = 2048) -> str:

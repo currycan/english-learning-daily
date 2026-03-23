@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Third-Party Claude API
-status: defining_requirements
-stopped_at: —
+status: roadmap_ready
+stopped_at: Phase 7 (not started)
 last_updated: "2026-03-23T00:00:00.000Z"
-last_activity: 2026-03-23 — Milestone v1.2 started
+last_activity: 2026-03-23 — Roadmap created for v1.2 (2 phases, 13 requirements mapped)
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Every day a ready-to-read English lesson lands in git — real content with targeted vocabulary, chunking expressions, and exercises to deepen understanding.
-**Current focus:** Defining requirements for v1.2
+**Current focus:** Phase 7 — Custom Endpoint Implementation (v1.2)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 7 — Custom Endpoint Implementation
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-23 — Milestone v1.2 started
+Status: Not started
+Last activity: 2026-03-23 — Roadmap created for v1.2
 
-Progress: [███████░░░] 75% (v1.0 complete, Phase 4 complete, Phase 5 complete)
+Progress: [████████░░] 75% (v1.0 phases 1-3 complete, v1.1 phases 4-6 complete)
 
 ## Accumulated Context
 
@@ -48,15 +48,17 @@ v1.1 decisions:
 - TEST-01 and TEST-02 embedded in implementation phases (4 and 5), not isolated
 - Fallback ordering: configured provider first → other provider (symmetric)
 - [Phase 04]: call_claude catches anthropic.APIError specifically (not bare Exception) — fixes v1.0 tech debt
-- [Phase 04]: openai.OpenAI() instantiated inside call_openai() for testability, mirrors anthropic pattern
+- [Phase 04]: openai.OpenAI() inside call_openai() for testability, mirrors anthropic pattern
 - [Phase 04]: CLAUDE_MODEL hardcoded in ai_provider.py as CLAUDE_MODEL constant, not in config
 - [Phase 06]: Module-scoped pytest fixture raises FileNotFoundError (not silent skip) for clear TDD RED state
 - [Phase 06]: Bilingual doc format (English + Chinese) matches existing docs/setup-guide.md style
 - [Phase 06-02]: OPENAI_API_KEY inserted as third row in GitHub Secrets table after ANTHROPIC_API_KEY; Step 7a added in setup-guide.md with cross-link to ai-providers.md
 
-### Pending Todos
-
-None.
+v1.2 decisions:
+- TPROV and CONF requirements merged into Phase 7 (tightly coupled: config layer feeds directly into client constructor)
+- TEST-01 and TEST-02 embedded in Phase 7 per TDD practice established in v1.1
+- DOCS requirements isolated in Phase 8 (depends on Phase 7 implementation being stable)
+- Priority order: env vars (ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN) > config.json fields > SDK defaults
 
 ### Decisions Added (Phase 04-02)
 
@@ -72,6 +74,10 @@ None.
 - bare Exception in call_openai is correct (wider net, consistent with Phase 4 decision; openai.OpenAIError not used)
 - generate_exercises.py unchanged — call_ai() interface fully backward-compatible
 
+### Pending Todos
+
+None.
+
 ### Blockers/Concerns
 
 - [Human Verification Needed] Confirm OPENAI_API_KEY secret available in GitHub repo before CI runs (OPENAI_API_KEY now in workflow; secret must be added manually in GitHub Settings)
@@ -79,6 +85,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T05:37:06.152Z
-Stopped at: Completed 06-02-PLAN.md
+Last session: 2026-03-23T00:00:00.000Z
+Stopped at: Roadmap created — ready for plan-phase 7
 Resume file: None

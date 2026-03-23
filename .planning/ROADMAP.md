@@ -53,7 +53,10 @@ Plans:
   2. When both providers fail, the script exits non-zero and the CI job is marked failed (identical behavior to v1.0)
   3. The CI log contains a fallback notice that names both the failed provider and the reason before the backup attempt
   4. Unit tests cover the primary-fails-backup-succeeds scenario and the both-fail scenario
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 05-01-PLAN.md — TDD: test stubs (RED) then fallback implementation in ai_provider.py (GREEN)
 
 ### Phase 6: AI Provider Documentation
 **Goal**: Any developer can look up `docs/ai-providers.md` and independently configure either provider with zero prior knowledge of the project
@@ -74,5 +77,5 @@ Plans:
 | 2. RSS Fetch | v1.0 | 2/2 | Complete | 2026-03-22 |
 | 3. AI Pipeline | v1.0 | 3/3 | Complete | 2026-03-23 |
 | 4. Provider Abstraction + OpenAI Integration | 2/2 | Complete   | 2026-03-23 | - |
-| 5. Fallback Logic | v1.1 | 0/TBD | Not started | - |
+| 5. Fallback Logic | v1.1 | 0/1 | Not started | - |
 | 6. AI Provider Documentation | v1.1 | 0/TBD | Not started | - |

@@ -26,10 +26,10 @@
 
 ### Documentation
 
-- [ ] **DOCS-01**: 提供 `docs/ai-providers.md`，包含在 platform.openai.com 获取 OpenAI API Key 的操作步骤
-- [ ] **DOCS-02**: 文档包含在 console.anthropic.com 获取 Anthropic API Key 的操作步骤
-- [ ] **DOCS-03**: 文档说明如何在 GitHub Actions Repository Settings 中配置 `OPENAI_API_KEY` 和 `ANTHROPIC_API_KEY` Secrets
-- [ ] **DOCS-04**: 文档说明 `AI_PROVIDER` 环境变量与 `plan/config.json` 的配置优先级规则
+- [x] **DOCS-01**: 提供 `docs/ai-providers.md`，包含在 platform.openai.com 获取 OpenAI API Key 的操作步骤
+- [x] **DOCS-02**: 文档包含在 console.anthropic.com 获取 Anthropic API Key 的操作步骤
+- [x] **DOCS-03**: 文档说明如何在 GitHub Actions Repository Settings 中配置 `OPENAI_API_KEY` 和 `ANTHROPIC_API_KEY` Secrets
+- [x] **DOCS-04**: 文档说明 `AI_PROVIDER` 环境变量与 `plan/config.json` 的配置优先级规则
 
 ### Testing
 
@@ -76,10 +76,10 @@
 | FALL-02 | Phase 5 | Complete |
 | FALL-03 | Phase 5 | Complete |
 | TEST-02 | Phase 5 | Complete |
-| DOCS-01 | Phase 6 | Pending |
-| DOCS-02 | Phase 6 | Pending |
-| DOCS-03 | Phase 6 | Pending |
-| DOCS-04 | Phase 6 | Pending |
+| DOCS-01 | Phase 6 | Complete |
+| DOCS-02 | Phase 6 | Complete |
+| DOCS-03 | Phase 6 | Complete |
+| DOCS-04 | Phase 6 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 15 total

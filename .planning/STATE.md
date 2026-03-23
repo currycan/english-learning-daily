@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Dual AI Provider
 status: completed
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-23T03:57:30.224Z"
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-03-23T04:09:09.962Z"
 last_activity: 2026-03-23 — Phase 5 plan 01 complete (provider fallback)
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 5
+  completed_plans: 4
   percent: 75
 ---
 
@@ -50,6 +50,8 @@ v1.1 decisions:
 - [Phase 04]: call_claude catches anthropic.APIError specifically (not bare Exception) — fixes v1.0 tech debt
 - [Phase 04]: openai.OpenAI() instantiated inside call_openai() for testability, mirrors anthropic pattern
 - [Phase 04]: CLAUDE_MODEL hardcoded in ai_provider.py as CLAUDE_MODEL constant, not in config
+- [Phase 06]: Module-scoped pytest fixture raises FileNotFoundError (not silent skip) for clear TDD RED state
+- [Phase 06]: Bilingual doc format (English + Chinese) matches existing docs/setup-guide.md style
 
 ### Pending Todos
 
@@ -76,6 +78,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T11:53:00.000Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-23T04:09:09.960Z
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None

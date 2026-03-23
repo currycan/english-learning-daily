@@ -57,7 +57,12 @@ Plans:
   2. The committed file contains four clearly separated sections: article text with source URL, vocabulary (5-8 words with definitions and in-article examples), chunking expressions (with Chinese meanings and 2+ usage examples each), and comprehension questions with answers
   3. The comprehension questions section contains at least one inferential question (not purely factual recall)
   4. If the Claude API call fails, the pipeline exits non-zero and no partial file is committed
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — TDD RED: anthropic dependency + test scaffold (12 failing tests for generate_exercises, 1 for commit_content stdin)
+- [ ] 03-02-PLAN.md — TDD GREEN: implement scripts/generate_exercises.py (all 12 tests pass)
+- [ ] 03-03-PLAN.md — Wire pipeline: update commit_content.py main() + update daily-content.yml to three-stage pipe
 
 ## Progress
 
@@ -68,4 +73,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete   | 2026-03-22 |
 | 2. RSS Fetch | 2/2 | Complete   | 2026-03-22 |
-| 3. AI Pipeline | 0/TBD | Not started | - |
+| 3. AI Pipeline | 0/3 | Not started | - |

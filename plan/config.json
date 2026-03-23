@@ -3,6 +3,8 @@
   "evening_hour": 21,
   "weekly_recording_day": "saturday",
   "timezone": "Asia/Shanghai",
+  "ai_provider": "anthropic",
+  "openai_model": "gpt-4o-mini",
   "content_feeds": {
     "primary_url": "https://www.newsinlevels.com/feed",
     "fallback_url": "https://www.bbc.co.uk/learningenglish/english/features/lingohack/feed.rss",

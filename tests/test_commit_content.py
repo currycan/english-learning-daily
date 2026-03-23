@@ -66,3 +66,24 @@ def test_git_commit_message_format(monkeypatch):
 
     commit_cmd = next(c for c in calls if "commit" in c)
     assert "content: add 2026-03-23" in commit_cmd
+
+
+def test_reads_stdin_and_writes_file(tmp_path, monkeypatch):
+    """After Phase 3: main() reads Markdown from stdin and writes it to content path."""
+    today = date(2026, 3, 23)
+    fake_path = tmp_path / "2026-03-23.md"
+
+    monkeypatch.setattr(cc, "get_beijing_date", lambda: today)
+    monkeypatch.setattr(cc, "content_path", lambda d: fake_path)
+    monkeypatch.setattr(cc, "CONTENT_DIR", tmp_path)
+
+    stdin_content = "# Lesson\n\nSome markdown content.\n"
+    monkeypatch.setattr("sys.stdin", __import__("io").StringIO(stdin_content))
+
+    with patch("scripts.commit_content.git_commit_and_push") as mock_git:
+        cc.main()
+
+    assert fake_path.exists()
+    assert fake_path.read_text() == stdin_content
+    assert "placeholder" not in fake_path.read_text()
+    mock_git.assert_called_once_with(fake_path, today)

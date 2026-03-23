@@ -26,5 +26,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit daily content
-        run: python -m scripts.commit_content
+      - name: Generate and commit daily content
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set -eo pipefail
+          python -m scripts.feed_article | \
+          python -m scripts.generate_exercises | \
+          python -m scripts.commit_content

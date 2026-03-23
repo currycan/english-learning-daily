@@ -1,91 +1,76 @@
 # Requirements: English Daily Content
 
 **Defined:** 2026-03-23
-**Milestone:** v1.1 Dual AI Provider
 **Core Value:** Every day a ready-to-read English lesson lands in git — real content with targeted vocabulary, chunking expressions, and exercises to deepen understanding.
 
-## v1.1 Requirements
+## v1.2 Requirements
 
-### Provider Abstraction
+Requirements for third-party Claude-compatible API integration.
 
-- [x] **PRVD-01**: 系统通过统一接口调用 AI 生成内容，业务逻辑与具体提供商解耦
-- [x] **PRVD-02**: 用户可通过环境变量 `AI_PROVIDER=openai|anthropic` 切换提供商（运行时优先）
-- [x] **PRVD-03**: 用户可在 `plan/config.json` 中设置 `ai_provider` 默认值，环境变量优先级更高
+### Provider Extension
 
-### OpenAI Integration
+- [ ] **TPROV-01**: call_claude() uses custom base_url when configured (env var or config.json)
+- [ ] **TPROV-02**: call_claude() uses custom auth_token when configured, independent of ANTHROPIC_API_KEY
+- [ ] **TPROV-03**: When no custom base_url/auth_token configured, behavior is identical to v1.1 (backward compatible)
+- [ ] **TPROV-04**: Fallback chain works correctly when primary provider uses a third-party Claude endpoint
 
-- [x] **OAPI-01**: 系统使用 OpenAI gpt-4o-mini 生成与现有格式完全一致的词汇、分块表达、理解问答内容
-- [x] **OAPI-02**: OpenAI 使用的模型可通过 `plan/config.json` 配置（默认 `gpt-4o-mini`）
-- [x] **OAPI-03**: `OPENAI_API_KEY` 仅从环境变量 / GitHub Secrets 读取，不写入任何代码或配置文件
+### Configuration
 
-### Fallback
-
-- [x] **FALL-01**: 主提供商 API 调用失败时，系统自动切换到备用提供商重试一次
-- [x] **FALL-02**: 两个提供商均失败时，脚本以非零退出码退出，CI 标红（与现有行为一致）
-- [x] **FALL-03**: 降级事件写入 CI 日志，包含：使用的提供商、降级原因
+- [ ] **CONF-01**: ANTHROPIC_BASE_URL env var is read and applied at highest priority
+- [ ] **CONF-02**: ANTHROPIC_AUTH_TOKEN env var is read and applied at highest priority
+- [ ] **CONF-03**: plan/config.json supports anthropic_base_url and anthropic_auth_token fields (lower priority than env vars)
+- [ ] **CONF-04**: GitHub Actions workflow injects ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN from repository secrets
 
 ### Documentation
 
-- [x] **DOCS-01**: 提供 `docs/ai-providers.md`，包含在 platform.openai.com 获取 OpenAI API Key 的操作步骤
-- [x] **DOCS-02**: 文档包含在 console.anthropic.com 获取 Anthropic API Key 的操作步骤
-- [x] **DOCS-03**: 文档说明如何在 GitHub Actions Repository Settings 中配置 `OPENAI_API_KEY` 和 `ANTHROPIC_API_KEY` Secrets
-- [x] **DOCS-04**: 文档说明 `AI_PROVIDER` 环境变量与 `plan/config.json` 的配置优先级规则
+- [ ] **DOCS-01**: docs/ai-providers.md includes third-party provider setup section (bilingual Chinese/English format)
+- [ ] **DOCS-02**: docs/ai-providers.md config.json example shows anthropic_base_url and anthropic_auth_token fields
+- [ ] **DOCS-03**: docs/ai-providers.md GitHub Secrets section explains adding custom base_url and token as secrets
 
-### Testing
+### Tests
 
-- [x] **TEST-01**: OpenAI 提供商路径有对应单元测试，API 调用通过 mock 隔离
-- [x] **TEST-02**: 降级逻辑有单元测试，覆盖主提供商失败 → 自动切换备用提供商的场景
+- [ ] **TEST-01**: Unit tests verify custom base_url and auth_token are passed to anthropic.Anthropic() client
+- [ ] **TEST-02**: Unit test confirms backward compatibility — missing config falls back to standard Anthropic behavior
 
 ## Future Requirements
 
-### Content Quality (deferred from v1.1)
+### Provider Extension
 
-- **QUAL-01**: Topic tagging (science, health, education, etc.) in file header
-- **QUAL-02**: Vocabulary reuse detection — skip words seen in previous N files
-- **QUAL-03**: CEFR word-level annotation on vocabulary entries A2/B1/B2
-
-### Operations
-
-- **OPS-02**: Weekly digest: auto-generated `content/week-NN.md`
+- **TPROV-05**: Support multiple named third-party profiles (e.g., switch between orcai / openrouter by name)
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Push notifications for content | Separate system; user reads from git directly |
-| Interactive exercises / quiz UI | Static Markdown only; no web app |
-| Multiple articles per day | One focused lesson beats information overload |
-| Audio or video content | Text only |
-| Grammar exercises | Chunking + comprehension sufficient for B1-B2 |
-| User progress tracking | No state tracking for content consumption |
-| Web scraping (non-RSS) | RSS-only keeps implementation stable and legal |
-| Multi-provider load balancing | Overkill for one call/day; fallback is sufficient |
+| Load balancing across third-party providers | Overkill for one call/day; fallback is sufficient |
+| Auto-discovery of third-party endpoints | Manual config is explicit and secure |
+| Third-party OpenAI-compatible proxy support | OpenAI SDK already handles this; separate concern |
 
 ## Traceability
 
+Which phases cover which requirements. Updated during roadmap creation.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PRVD-01 | Phase 4 | Complete |
-| PRVD-02 | Phase 4 | Complete |
-| PRVD-03 | Phase 4 | Complete |
-| OAPI-01 | Phase 4 | Complete |
-| OAPI-02 | Phase 4 | Complete |
-| OAPI-03 | Phase 4 | Complete |
-| TEST-01 | Phase 4 | Complete |
-| FALL-01 | Phase 5 | Complete |
-| FALL-02 | Phase 5 | Complete |
-| FALL-03 | Phase 5 | Complete |
-| TEST-02 | Phase 5 | Complete |
-| DOCS-01 | Phase 6 | Complete |
-| DOCS-02 | Phase 6 | Complete |
-| DOCS-03 | Phase 6 | Complete |
-| DOCS-04 | Phase 6 | Complete |
+| TPROV-01 | — | Pending |
+| TPROV-02 | — | Pending |
+| TPROV-03 | — | Pending |
+| TPROV-04 | — | Pending |
+| CONF-01 | — | Pending |
+| CONF-02 | — | Pending |
+| CONF-03 | — | Pending |
+| CONF-04 | — | Pending |
+| DOCS-01 | — | Pending |
+| DOCS-02 | — | Pending |
+| DOCS-03 | — | Pending |
+| TEST-01 | — | Pending |
+| TEST-02 | — | Pending |
 
 **Coverage:**
-- v1.1 requirements: 15 total
-- Mapped to phases: 15
-- Unmapped: 0 ✓
+- v1.2 requirements: 13 total
+- Mapped to phases: 0
+- Unmapped: 13 ⚠️
 
 ---
 *Requirements defined: 2026-03-23*
-*Last updated: 2026-03-23 — traceability populated after roadmap creation*
+*Last updated: 2026-03-23 after initial definition*

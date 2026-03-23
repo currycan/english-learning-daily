@@ -12,7 +12,7 @@ import sys
 import anthropic
 
 
-MODEL = "claude-3-5-haiku-20241022"
+MODEL = "claude-haiku-4-5-20251001"
 
 
 def build_prompt(envelope: dict) -> str:

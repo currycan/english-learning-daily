@@ -24,7 +24,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 - [x] **Phase 4: Provider Abstraction + OpenAI Integration** — Unified provider interface, env var + config switching, OpenAI gpt-4o-mini producing identical output, unit tests for OpenAI path (completed 2026-03-23)
 - [x] **Phase 5: Fallback Logic** — Automatic provider fallback on API failure, CI-visible fallback logging, unit tests for fallback scenarios (completed 2026-03-23)
-- [ ] **Phase 6: AI Provider Documentation** — Configuration guide covering both API keys, GitHub Secrets setup, and provider switching rules
+- [x] **Phase 6: AI Provider Documentation** — Configuration guide covering both API keys, GitHub Secrets setup, and provider switching rules (completed 2026-03-23)
 
 ## Phase Details
 
@@ -82,4 +82,4 @@ Plans:
 | 3. AI Pipeline | v1.0 | 3/3 | Complete | 2026-03-23 |
 | 4. Provider Abstraction + OpenAI Integration | 2/2 | Complete   | 2026-03-23 | - |
 | 5. Fallback Logic | 1/1 | Complete   | 2026-03-23 | - |
-| 6. AI Provider Documentation | 1/2 | In Progress|  | - |
+| 6. AI Provider Documentation | 2/2 | Complete   | 2026-03-23 | - |

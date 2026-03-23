@@ -1,6 +1,6 @@
-"""AI exercise generator — Phase 3.
+"""AI exercise generator — Phase 4.
 
-Reads Article Envelope JSON from stdin, calls Claude API once,
+Reads Article Envelope JSON from stdin, calls AI provider once,
 outputs full Markdown lesson to stdout.
 
 Usage (in pipeline):
@@ -8,11 +8,9 @@ Usage (in pipeline):
 """
 import json
 import sys
+from pathlib import Path
 
-import anthropic
-
-
-MODEL = "claude-haiku-4-5-20251001"
+from scripts.ai_provider import call_ai, resolve_provider
 
 
 def build_prompt(envelope: dict) -> str:
@@ -40,21 +38,6 @@ Article title: {title}
 
 Article body:
 {body}"""
-
-
-def call_claude(prompt: str, max_tokens: int = 2048) -> str:
-    """Call Claude API. Returns response text. Exits 1 on any error."""
-    client = anthropic.Anthropic()
-    try:
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=max_tokens,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return response.content[0].text
-    except Exception as e:
-        print(f"ERROR: Claude API call failed: {e}", file=sys.stderr)
-        sys.exit(1)
 
 
 def parse_response(raw_text: str) -> dict:
@@ -127,6 +110,16 @@ def render_markdown(envelope: dict, exercises: dict) -> str:
     return "\n".join(lines)
 
 
+def _load_config() -> dict:
+    """Load plan/config.json. Exits 1 on missing or malformed file."""
+    config_path = Path(__file__).parent.parent / "plan" / "config.json"
+    try:
+        return json.loads(config_path.read_text())
+    except (OSError, json.JSONDecodeError) as e:
+        print(f"ERROR: Failed to load config: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def main() -> None:
     """Entry point: read Article Envelope from stdin, output Markdown to stdout."""
     raw = sys.stdin.read()
@@ -136,8 +129,12 @@ def main() -> None:
         print(f"ERROR: Invalid JSON from stdin: {e}", file=sys.stderr)
         sys.exit(1)
 
+    config = _load_config()
+    provider = resolve_provider(config)
+    model_config = {"openai_model": config.get("openai_model", "gpt-4o-mini")}
+
     prompt = build_prompt(envelope)
-    raw_response = call_claude(prompt)
+    raw_response = call_ai(prompt, provider=provider, model_config=model_config)
     exercises = parse_response(raw_response)
     markdown = render_markdown(envelope, exercises)
     print(markdown)

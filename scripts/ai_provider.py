@@ -60,6 +60,8 @@ def call_claude(
         kwargs["base_url"] = effective_url
     if effective_key:
         kwargs["api_key"] = effective_key
+    endpoint = effective_url or "https://api.anthropic.com"
+    print(f"INFO: Claude endpoint: {endpoint}", file=sys.stderr)
     client = anthropic.Anthropic(**kwargs)
     try:
         response = client.messages.create(

@@ -225,4 +225,6 @@ def test_call_claude_uses_config_base_url_when_no_env_var(monkeypatch):
             content=[MagicMock(text="response")]
         )
         ap.call_claude("prompt", base_url="https://config.example.com")
-    MockAnthropic.assert_called_once_with(base_url="https://config.example.com")
+    # When base_url is set but no token, api_key="no-key" is passed to prevent
+    # the SDK from reading ANTHROPIC_API_KEY and sending an official key to a third-party endpoint.
+    MockAnthropic.assert_called_once_with(base_url="https://config.example.com", api_key="no-key")

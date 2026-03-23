@@ -60,7 +60,11 @@ def call_claude(
     kwargs: dict = {}
     if effective_url:
         kwargs["base_url"] = effective_url
-    if effective_key:
+        # When using a custom endpoint, always set api_key explicitly.
+        # If no token provided, use a placeholder — prevents the SDK from automatically
+        # reading ANTHROPIC_API_KEY (official key) and sending it to a third-party endpoint.
+        kwargs["api_key"] = effective_key or "no-key"
+    elif effective_key:
         kwargs["api_key"] = effective_key
     endpoint = effective_url or "https://api.anthropic.com"
     effective_model = model or CLAUDE_MODEL

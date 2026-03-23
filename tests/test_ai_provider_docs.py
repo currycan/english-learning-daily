@@ -85,3 +85,57 @@ def test_priority_rule_config_field(docs_content: str):
     assert "ai_provider" in docs_content, (
         "DOCS-04: docs/ai-providers.md must contain 'ai_provider' (config.json field)"
     )
+
+
+# ---------------------------------------------------------------------------
+# v1.2 DOCS-01 — Third-party Claude API section (bilingual)
+# ---------------------------------------------------------------------------
+
+
+def test_section5_exists(docs_content: str):
+    assert "## 5. Third-Party Claude API" in docs_content, (
+        "DOCS-01: docs/ai-providers.md must contain '## 5. Third-Party Claude API'"
+    )
+
+
+def test_third_party_bilingual(docs_content: str):
+    assert "第三方 Claude 兼容 API" in docs_content, (
+        "DOCS-01: docs/ai-providers.md must contain Chinese translation '第三方 Claude 兼容 API'"
+    )
+
+
+# ---------------------------------------------------------------------------
+# v1.2 DOCS-02 — config.json example with anthropic_base_url / anthropic_auth_token
+# ---------------------------------------------------------------------------
+
+
+def test_config_example_fields(docs_content: str):
+    assert "anthropic_base_url" in docs_content, (
+        "DOCS-02: docs/ai-providers.md must contain 'anthropic_base_url' in config example"
+    )
+    assert "anthropic_auth_token" in docs_content, (
+        "DOCS-02: docs/ai-providers.md must contain 'anthropic_auth_token' in config example"
+    )
+
+
+# ---------------------------------------------------------------------------
+# v1.2 DOCS-03 — GitHub Secrets section for ANTHROPIC_BASE_URL / ANTHROPIC_AUTH_TOKEN
+# ---------------------------------------------------------------------------
+
+
+def test_github_secrets_section(docs_content: str):
+    assert "ANTHROPIC_BASE_URL" in docs_content, (
+        "DOCS-03: docs/ai-providers.md must contain 'ANTHROPIC_BASE_URL'"
+    )
+    assert "ANTHROPIC_AUTH_TOKEN" in docs_content, (
+        "DOCS-03: docs/ai-providers.md must contain 'ANTHROPIC_AUTH_TOKEN'"
+    )
+
+
+def test_summary_table_optional_rows(docs_content: str):
+    assert "ANTHROPIC_BASE_URL (optional)" in docs_content, (
+        "DOCS-03: Summary table must contain 'ANTHROPIC_BASE_URL (optional)'"
+    )
+    assert "ANTHROPIC_AUTH_TOKEN (optional)" in docs_content, (
+        "DOCS-03: Summary table must contain 'ANTHROPIC_AUTH_TOKEN (optional)'"
+    )

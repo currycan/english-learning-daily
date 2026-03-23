@@ -38,7 +38,11 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
   3. `plan/config.json` field `ai_provider` controls the default provider when the env var is absent
   4. The OpenAI model used is configurable via `plan/config.json` (defaults to `gpt-4o-mini`)
   5. Unit tests for the OpenAI provider path pass with the API call mocked; `OPENAI_API_KEY` is never present in source code or config files
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Create scripts/ai_provider.py with provider logic + tests (TDD)
+- [ ] 04-02-PLAN.md — Wire generate_exercises.py to call_ai; update config, requirements, CI workflow
 
 ### Phase 5: Fallback Logic
 **Goal**: A single primary provider failure does not break the daily lesson — the system automatically retries with the backup provider and records what happened
@@ -69,6 +73,6 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 | 1. Foundation | v1.0 | 2/2 | Complete | 2026-03-22 |
 | 2. RSS Fetch | v1.0 | 2/2 | Complete | 2026-03-22 |
 | 3. AI Pipeline | v1.0 | 3/3 | Complete | 2026-03-23 |
-| 4. Provider Abstraction + OpenAI Integration | v1.1 | 0/TBD | Not started | - |
+| 4. Provider Abstraction + OpenAI Integration | v1.1 | 0/2 | Not started | - |
 | 5. Fallback Logic | v1.1 | 0/TBD | Not started | - |
 | 6. AI Provider Documentation | v1.1 | 0/TBD | Not started | - |

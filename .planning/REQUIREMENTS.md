@@ -20,9 +20,9 @@
 
 ### Fallback
 
-- [ ] **FALL-01**: 主提供商 API 调用失败时，系统自动切换到备用提供商重试一次
-- [ ] **FALL-02**: 两个提供商均失败时，脚本以非零退出码退出，CI 标红（与现有行为一致）
-- [ ] **FALL-03**: 降级事件写入 CI 日志，包含：使用的提供商、降级原因
+- [x] **FALL-01**: 主提供商 API 调用失败时，系统自动切换到备用提供商重试一次
+- [x] **FALL-02**: 两个提供商均失败时，脚本以非零退出码退出，CI 标红（与现有行为一致）
+- [x] **FALL-03**: 降级事件写入 CI 日志，包含：使用的提供商、降级原因
 
 ### Documentation
 
@@ -34,7 +34,7 @@
 ### Testing
 
 - [x] **TEST-01**: OpenAI 提供商路径有对应单元测试，API 调用通过 mock 隔离
-- [ ] **TEST-02**: 降级逻辑有单元测试，覆盖主提供商失败 → 自动切换备用提供商的场景
+- [x] **TEST-02**: 降级逻辑有单元测试，覆盖主提供商失败 → 自动切换备用提供商的场景
 
 ## Future Requirements
 
@@ -72,10 +72,10 @@
 | OAPI-02 | Phase 4 | Complete |
 | OAPI-03 | Phase 4 | Complete |
 | TEST-01 | Phase 4 | Complete |
-| FALL-01 | Phase 5 | Pending |
-| FALL-02 | Phase 5 | Pending |
-| FALL-03 | Phase 5 | Pending |
-| TEST-02 | Phase 5 | Pending |
+| FALL-01 | Phase 5 | Complete |
+| FALL-02 | Phase 5 | Complete |
+| FALL-03 | Phase 5 | Complete |
+| TEST-02 | Phase 5 | Complete |
 | DOCS-01 | Phase 6 | Pending |
 | DOCS-02 | Phase 6 | Pending |
 | DOCS-03 | Phase 6 | Pending |

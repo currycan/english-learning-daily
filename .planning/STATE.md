@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Dual AI Provider
-status: completed
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-03-23T03:31:52.347Z"
-last_activity: 2026-03-23 — Phase 4 plans 01 and 02 complete
+status: in_progress
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-23T11:53:00.000Z"
+last_activity: 2026-03-23 — Phase 5 plan 01 complete (provider fallback)
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 50
+  total_plans: 3
+  completed_plans: 3
+  percent: 75
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Every day a ready-to-read English lesson lands in git — real content with targeted vocabulary, chunking expressions, and exercises to deepen understanding.
-**Current focus:** Phase 4 — Provider Abstraction + OpenAI Integration
+**Current focus:** Phase 5 — Fallback Logic
 
 ## Current Position
 
-Phase: 4 of 6 (Provider Abstraction + OpenAI Integration)
-Plan: 2 of 2 in current phase (COMPLETE)
-Status: Phase 4 complete — ready for Phase 5
-Last activity: 2026-03-23 — Phase 4 plans 01 and 02 complete
+Phase: 5 of 6 (Fallback Logic)
+Plan: 1 of 1 in current phase (COMPLETE)
+Status: Phase 5 complete — all plans done
+Last activity: 2026-03-23 — Phase 5 plan 01 complete (provider fallback)
 
-Progress: [█████░░░░░] 50% (v1.0 complete, Phase 4 complete)
+Progress: [███████░░░] 75% (v1.0 complete, Phase 4 complete, Phase 5 complete)
 
 ## Accumulated Context
 
@@ -61,6 +61,14 @@ None.
 - _load_config() uses Path(__file__).parent.parent / "plan" / "config.json" for CWD-independent resolution
 - model_config dict with openai_model key passed to call_ai for OpenAI routing
 
+### Decisions Added (Phase 05-01)
+
+- ProviderError raised from call_claude/call_openai instead of sys.exit(1) — keeps low-level callers composable
+- _backup_provider uses set difference on VALID_PROVIDERS — deterministic with exactly two providers
+- _dispatch private helper avoids code duplication between primary and fallback paths in call_ai
+- bare Exception in call_openai is correct (wider net, consistent with Phase 4 decision; openai.OpenAIError not used)
+- generate_exercises.py unchanged — call_ai() interface fully backward-compatible
+
 ### Blockers/Concerns
 
 - [Human Verification Needed] Confirm OPENAI_API_KEY secret available in GitHub repo before CI runs (OPENAI_API_KEY now in workflow; secret must be added manually in GitHub Settings)
@@ -68,6 +76,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T04:00:00.000Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-03-23T11:53:00.000Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None

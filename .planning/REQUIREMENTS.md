@@ -21,8 +21,8 @@
 ### Output
 
 - [x] **OUT-01**: System renders a Markdown file with four clearly delimited sections: full article text + source URL → vocabulary → chunking expressions → comprehension questions + answers
-- [ ] **OUT-02**: File is named `content/YYYY-MM-DD.md` using Beijing time (CST, UTC+8) regardless of the CI runner's timezone
-- [ ] **OUT-03**: System commits and pushes the rendered file to git via GitHub Actions on each successful run
+- [x] **OUT-02**: File is named `content/YYYY-MM-DD.md` using Beijing time (CST, UTC+8) regardless of the CI runner's timezone
+- [x] **OUT-03**: System commits and pushes the rendered file to git via GitHub Actions on each successful run
 
 ### CI Workflow
 
@@ -68,8 +68,8 @@
 | AIGEN-03 | Phase 3 | Complete |
 | AIGEN-04 | Phase 3 | Complete |
 | OUT-01 | Phase 3 | Complete |
-| OUT-02 | Phase 3 | Pending |
-| OUT-03 | Phase 3 | Pending |
+| OUT-02 | Phase 3 | Complete |
+| OUT-03 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 12 total

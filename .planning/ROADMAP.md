@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - CI scaffold, shared utilities, git commit, and timezone/idempotency infrastructure (completed 2026-03-22)
 - [x] **Phase 2: RSS Fetch** - Article fetching from VOA/BBC RSS with validation and Article Envelope output (completed 2026-03-22)
-- [ ] **Phase 3: AI Pipeline** - AI exercise generation, Markdown rendering, and complete end-to-end pipeline
+- [x] **Phase 3: AI Pipeline** - AI exercise generation, Markdown rendering, and complete end-to-end pipeline (completed 2026-03-23)
 
 ## Phase Details
 
@@ -73,4 +73,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete   | 2026-03-22 |
 | 2. RSS Fetch | 2/2 | Complete   | 2026-03-22 |
-| 3. AI Pipeline | 2/3 | In Progress|  |
+| 3. AI Pipeline | 3/3 | Complete   | 2026-03-23 |

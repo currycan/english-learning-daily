@@ -62,7 +62,10 @@ Plans:
   1. docs/ai-providers.md contains a bilingual (English + Chinese) third-party Claude section explaining ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN
   2. The config.json example in docs shows anthropic_base_url and anthropic_auth_token fields with placeholder values
   3. A GitHub Secrets section in docs covers how to add ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN as repository secrets
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 08-01-PLAN.md — TDD: write failing doc tests, then write Section 5 + Summary table rows
 
 ## Progress
 
@@ -75,4 +78,4 @@ Plans:
 | 5. Fallback Logic | v1.1 | 1/1 | Complete | 2026-03-23 |
 | 6. AI Provider Documentation | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 7. Custom Endpoint Implementation | 3/3 | Complete    | 2026-03-23 | - |
-| 8. Third-Party Provider Documentation | v1.2 | 0/TBD | Not started | - |
+| 8. Third-Party Provider Documentation | v1.2 | 0/1 | Not started | - |

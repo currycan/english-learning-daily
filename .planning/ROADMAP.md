@@ -47,7 +47,12 @@ Full archive: `.planning/milestones/v1.1-ROADMAP.md`
   3. anthropic_base_url and anthropic_auth_token fields in plan/config.json are read as lower-priority fallback when env vars are absent
   4. The fallback chain (primary → backup provider) continues to work end-to-end when primary is a third-party Claude endpoint and raises ProviderError
   5. Unit tests cover both the custom-params path and the backward-compatible path, and all tests pass
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Write three failing tests for custom endpoint behavior (TDD RED)
+- [ ] 07-02-PLAN.md — Implement call_claude() extension and model_config wiring (TDD GREEN)
+- [ ] 07-03-PLAN.md — Add ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN to CI workflow env block
 
 ### Phase 8: Third-Party Provider Documentation
 **Goal**: A user setting up a third-party Claude-compatible API can follow docs/ai-providers.md to configure the integration end-to-end without reading source code
@@ -69,5 +74,5 @@ Full archive: `.planning/milestones/v1.1-ROADMAP.md`
 | 4. Provider Abstraction + OpenAI Integration | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 5. Fallback Logic | v1.1 | 1/1 | Complete | 2026-03-23 |
 | 6. AI Provider Documentation | v1.1 | 2/2 | Complete | 2026-03-23 |
-| 7. Custom Endpoint Implementation | v1.2 | 0/TBD | Not started | - |
+| 7. Custom Endpoint Implementation | v1.2 | 0/3 | Not started | - |
 | 8. Third-Party Provider Documentation | v1.2 | 0/TBD | Not started | - |

@@ -63,31 +63,29 @@
 
 ## Traceability
 
-_Populated during roadmap creation._
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PRVD-01 | — | Pending |
-| PRVD-02 | — | Pending |
-| PRVD-03 | — | Pending |
-| OAPI-01 | — | Pending |
-| OAPI-02 | — | Pending |
-| OAPI-03 | — | Pending |
-| FALL-01 | — | Pending |
-| FALL-02 | — | Pending |
-| FALL-03 | — | Pending |
-| DOCS-01 | — | Pending |
-| DOCS-02 | — | Pending |
-| DOCS-03 | — | Pending |
-| DOCS-04 | — | Pending |
-| TEST-01 | — | Pending |
-| TEST-02 | — | Pending |
+| PRVD-01 | Phase 4 | Pending |
+| PRVD-02 | Phase 4 | Pending |
+| PRVD-03 | Phase 4 | Pending |
+| OAPI-01 | Phase 4 | Pending |
+| OAPI-02 | Phase 4 | Pending |
+| OAPI-03 | Phase 4 | Pending |
+| TEST-01 | Phase 4 | Pending |
+| FALL-01 | Phase 5 | Pending |
+| FALL-02 | Phase 5 | Pending |
+| FALL-03 | Phase 5 | Pending |
+| TEST-02 | Phase 5 | Pending |
+| DOCS-01 | Phase 6 | Pending |
+| DOCS-02 | Phase 6 | Pending |
+| DOCS-03 | Phase 6 | Pending |
+| DOCS-04 | Phase 6 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 15 total
-- Mapped to phases: 0
-- Unmapped: 15 ⚠️
+- Mapped to phases: 15
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-23*
-*Last updated: 2026-03-23 after v1.1 milestone start*
+*Last updated: 2026-03-23 — traceability populated after roadmap creation*

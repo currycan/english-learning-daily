@@ -2,7 +2,17 @@
 
 ## What This Is
 
-An automated system that fetches a real English article from public sources (VOA, BBC) each day, uses the Claude API to generate B1-B2 companion exercises (vocabulary highlights, chunking expressions, comprehension questions with answers), and commits the combined lesson as a date-named Markdown file to git. Ships daily to `content/YYYY-MM-DD.md` via GitHub Actions.
+An automated system that fetches a real English article from public sources each day, uses an AI provider (Claude or OpenAI, switchable via config) to generate B1-B2 companion exercises (vocabulary highlights, chunking expressions, comprehension questions with answers), and commits the combined lesson as a date-named Markdown file to git. Ships daily to `content/YYYY-MM-DD.md` via GitHub Actions.
+
+## Current Milestone: v1.1 Dual AI Provider
+
+**Goal:** Support both Claude and OpenAI as interchangeable content generation backends, with automatic fallback on failure.
+
+**Target features:**
+- Provider abstraction layer (unified interface, env var + config.json switching)
+- OpenAI gpt-4o-mini integration producing identical output format
+- Automatic fallback to backup provider on API failure
+- `docs/ai-providers.md` configuration guide
 
 ## Core Value
 
@@ -25,10 +35,11 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 
 ### Active
 
-- [ ] Topic tagging (science, health, education, etc.) in file header (QUAL-01)
-- [ ] Vocabulary reuse detection — skip words seen in previous N files (QUAL-02)
-- [ ] CEFR word-level annotation on vocabulary entries A2/B1/B2 (QUAL-03)
-- [ ] Weekly digest: auto-generated `content/week-NN.md` (OPS-02)
+- [ ] Provider abstraction layer with env var + config.json switching (PRVD-01, PRVD-02, PRVD-03) — v1.1
+- [ ] OpenAI gpt-4o-mini integration with identical output format (OAPI-01, OAPI-02, OAPI-03) — v1.1
+- [ ] Automatic fallback to backup provider on API failure (FALL-01, FALL-02, FALL-03) — v1.1
+- [ ] AI providers configuration guide docs/ai-providers.md (DOCS-01–04) — v1.1
+- [ ] OpenAI and fallback unit tests (TEST-01, TEST-02) — v1.1
 
 ### Out of Scope
 
@@ -52,9 +63,9 @@ Primary RSS source changed during development from VOA `feeds.voanews.com` to `n
 
 ## Constraints
 
-- **Tech stack**: Python, no new runtime dependencies beyond `feedparser` and `anthropic` SDK
-- **API costs**: Claude API usage minimal — one call per day (claude-3-5-haiku-20241022)
-- **No secrets in code**: `ANTHROPIC_API_KEY` from GitHub Secrets only
+- **Tech stack**: Python; adds `openai` SDK alongside existing `feedparser` and `anthropic`
+- **API costs**: one AI call per day; gpt-4o-mini and claude-3-5-haiku are both cost-efficient
+- **No secrets in code**: `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` from GitHub Secrets only
 - **File format**: Pure Markdown, no frontmatter, readable in any git viewer
 - **CI**: GitHub Actions (existing infrastructure)
 
@@ -74,4 +85,4 @@ Primary RSS source changed during development from VOA `feeds.voanews.com` to `n
 | TDD throughout (RED → GREEN per plan) | Caught integration issues early; all tests pass in CI | ✓ Good |
 
 ---
-*Last updated: 2026-03-23 after v1.0 milestone*
+*Last updated: 2026-03-23 after v1.1 milestone start*

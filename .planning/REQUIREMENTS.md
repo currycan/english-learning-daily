@@ -13,14 +13,14 @@
 
 ### AI Generation
 
-- [ ] **AIGEN-01**: AI extracts 5–8 key vocabulary words from the article with plain-English definitions and original example sentences taken directly from the article text
-- [ ] **AIGEN-02**: AI extracts 3–5 chunking expressions (natural English phrases and collocations) from the article, each with Chinese meaning and at least 2 usage examples showing the chunk in varied contexts
-- [ ] **AIGEN-03**: AI generates 3–5 comprehension questions covering both factual recall and inference
-- [ ] **AIGEN-04**: AI generates answers for all comprehension questions
+- [x] **AIGEN-01**: AI extracts 5–8 key vocabulary words from the article with plain-English definitions and original example sentences taken directly from the article text
+- [x] **AIGEN-02**: AI extracts 3–5 chunking expressions (natural English phrases and collocations) from the article, each with Chinese meaning and at least 2 usage examples showing the chunk in varied contexts
+- [x] **AIGEN-03**: AI generates 3–5 comprehension questions covering both factual recall and inference
+- [x] **AIGEN-04**: AI generates answers for all comprehension questions
 
 ### Output
 
-- [ ] **OUT-01**: System renders a Markdown file with four clearly delimited sections: full article text + source URL → vocabulary → chunking expressions → comprehension questions + answers
+- [x] **OUT-01**: System renders a Markdown file with four clearly delimited sections: full article text + source URL → vocabulary → chunking expressions → comprehension questions + answers
 - [ ] **OUT-02**: File is named `content/YYYY-MM-DD.md` using Beijing time (CST, UTC+8) regardless of the CI runner's timezone
 - [ ] **OUT-03**: System commits and pushes the rendered file to git via GitHub Actions on each successful run
 
@@ -63,11 +63,11 @@
 | FTCH-01 | Phase 2 | Complete |
 | FTCH-02 | Phase 2 | Complete |
 | FTCH-03 | Phase 2 | Complete |
-| AIGEN-01 | Phase 3 | Pending |
-| AIGEN-02 | Phase 3 | Pending |
-| AIGEN-03 | Phase 3 | Pending |
-| AIGEN-04 | Phase 3 | Pending |
-| OUT-01 | Phase 3 | Pending |
+| AIGEN-01 | Phase 3 | Complete |
+| AIGEN-02 | Phase 3 | Complete |
+| AIGEN-03 | Phase 3 | Complete |
+| AIGEN-04 | Phase 3 | Complete |
+| OUT-01 | Phase 3 | Complete |
 | OUT-02 | Phase 3 | Pending |
 | OUT-03 | Phase 3 | Pending |
 

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-23T01:12:31.958Z"
+stopped_at: Completed 03-ai-pipeline-01-PLAN.md
+last_updated: "2026-03-23T01:38:59.765Z"
 last_activity: 2026-03-22 — Roadmap created
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 7
+  completed_plans: 5
   percent: 0
 ---
 
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P02 | 3min | 2 tasks | 3 files |
 | Phase 02-rss-fetch P01 | 8min | 2 tasks | 3 files |
 | Phase 02-rss-fetch P02 | 3min | 1 tasks | 1 files |
+| Phase 03-ai-pipeline P01 | 106 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Recent decisions affecting current work:
 - [Phase 02-rss-fetch]: newsinlevels.com/feed confirmed as ONLY verified primary RSS URL returning 800+ char body via content:encoded
 - [Phase 02-rss-fetch]: BBC Learning English fallback kept per locked user decision; retry logic handles gracefully if it also returns short content
 - [Phase 02-rss-fetch]: Used HTMLParser subclass (_TextExtractor) instead of regex for HTML cleaning — handles nested tags and entities correctly
+- [Phase 03-ai-pipeline]: Pin anthropic==0.86.0 exact version in requirements.txt for reproducible CI
+- [Phase 03-ai-pipeline]: 12 generate_exercises tests use ModuleNotFoundError as RED signal before GREEN implementation
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T01:12:31.955Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-ai-pipeline/03-CONTEXT.md
+Last session: 2026-03-23T01:38:59.763Z
+Stopped at: Completed 03-ai-pipeline-01-PLAN.md
+Resume file: None

@@ -104,6 +104,7 @@ Set via: `Repository Settings → Secrets and variables → Actions`
 |---------------|----------------------|-------------------|
 | `BARK_TOKEN` | Push notification system / 推送通知系统 | Bark app token (token only, no URL prefix) / Bark App token（仅 token，不含 URL 前缀） |
 | `ANTHROPIC_API_KEY` | Content generation system / 内容生成系统 | Anthropic API key for Claude / Claude 的 Anthropic API key |
+| `OPENAI_API_KEY` | Content generation system / 内容生成系统 | OpenAI API key for GPT-4o-mini / GPT-4o-mini 的 OpenAI API key |
 
 **Security rules / 安全规则：**
 - Secrets are **only** accessible in GitHub Actions environment variables.

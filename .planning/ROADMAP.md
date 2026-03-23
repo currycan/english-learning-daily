@@ -22,7 +22,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 **Milestone Goal:** Support both Claude and OpenAI as interchangeable content generation backends, with automatic fallback on failure.
 
-- [ ] **Phase 4: Provider Abstraction + OpenAI Integration** — Unified provider interface, env var + config switching, OpenAI gpt-4o-mini producing identical output, unit tests for OpenAI path
+- [x] **Phase 4: Provider Abstraction + OpenAI Integration** — Unified provider interface, env var + config switching, OpenAI gpt-4o-mini producing identical output, unit tests for OpenAI path (completed 2026-03-23)
 - [ ] **Phase 5: Fallback Logic** — Automatic provider fallback on API failure, CI-visible fallback logging, unit tests for fallback scenarios
 - [ ] **Phase 6: AI Provider Documentation** — Configuration guide covering both API keys, GitHub Secrets setup, and provider switching rules
 
@@ -73,6 +73,6 @@ Plans:
 | 1. Foundation | v1.0 | 2/2 | Complete | 2026-03-22 |
 | 2. RSS Fetch | v1.0 | 2/2 | Complete | 2026-03-22 |
 | 3. AI Pipeline | v1.0 | 3/3 | Complete | 2026-03-23 |
-| 4. Provider Abstraction + OpenAI Integration | 1/2 | In Progress|  | - |
+| 4. Provider Abstraction + OpenAI Integration | 2/2 | Complete   | 2026-03-23 | - |
 | 5. Fallback Logic | v1.1 | 0/TBD | Not started | - |
 | 6. AI Provider Documentation | v1.1 | 0/TBD | Not started | - |

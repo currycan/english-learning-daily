@@ -16,7 +16,7 @@
 
 - [x] **OAPI-01**: 系统使用 OpenAI gpt-4o-mini 生成与现有格式完全一致的词汇、分块表达、理解问答内容
 - [x] **OAPI-02**: OpenAI 使用的模型可通过 `plan/config.json` 配置（默认 `gpt-4o-mini`）
-- [ ] **OAPI-03**: `OPENAI_API_KEY` 仅从环境变量 / GitHub Secrets 读取，不写入任何代码或配置文件
+- [x] **OAPI-03**: `OPENAI_API_KEY` 仅从环境变量 / GitHub Secrets 读取，不写入任何代码或配置文件
 
 ### Fallback
 
@@ -70,7 +70,7 @@
 | PRVD-03 | Phase 4 | Complete |
 | OAPI-01 | Phase 4 | Complete |
 | OAPI-02 | Phase 4 | Complete |
-| OAPI-03 | Phase 4 | Pending |
+| OAPI-03 | Phase 4 | Complete |
 | TEST-01 | Phase 4 | Complete |
 | FALL-01 | Phase 5 | Pending |
 | FALL-02 | Phase 5 | Pending |

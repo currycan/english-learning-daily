@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Dual AI Provider
 status: planning
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-23T03:22:58.284Z"
-last_activity: 2026-03-23 — v1.1 roadmap created; phases 4-6 defined
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-23T04:00:00.000Z"
+last_activity: 2026-03-23 — Phase 4 complete: provider abstraction wired end-to-end
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 2
-  completed_plans: 1
-  percent: 30
+  completed_plans: 2
+  percent: 50
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-23)
 ## Current Position
 
 Phase: 4 of 6 (Provider Abstraction + OpenAI Integration)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-23 — v1.1 roadmap created; phases 4-6 defined
+Plan: 2 of 2 in current phase (COMPLETE)
+Status: Phase 4 complete — ready for Phase 5
+Last activity: 2026-03-23 — Phase 4 plans 01 and 02 complete
 
-Progress: [███░░░░░░░] 30% (v1.0 complete, v1.1 not started)
+Progress: [█████░░░░░] 50% (v1.0 complete, Phase 4 complete)
 
 ## Accumulated Context
 
@@ -55,13 +55,19 @@ v1.1 decisions:
 
 None.
 
+### Decisions Added (Phase 04-02)
+
+- Provider selection controlled via plan/config.json not CI env var (AI_PROVIDER not added to yml)
+- _load_config() uses Path(__file__).parent.parent / "plan" / "config.json" for CWD-independent resolution
+- model_config dict with openai_model key passed to call_ai for OpenAI routing
+
 ### Blockers/Concerns
 
-- [Tech Debt from v1.0] call_claude() catches bare Exception instead of anthropic.APIError — address during provider abstraction refactor (Phase 4)
-- [Human Verification Needed] Confirm OPENAI_API_KEY secret available in GitHub repo before CI runs
+- [Human Verification Needed] Confirm OPENAI_API_KEY secret available in GitHub repo before CI runs (OPENAI_API_KEY now in workflow; secret must be added manually in GitHub Settings)
+- [Note] OAPI-03 grep audit hits false positive in ai_provider.py comment line — no actual key in source
 
 ## Session Continuity
 
-Last session: 2026-03-23T03:22:58.283Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-23T04:00:00.000Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None

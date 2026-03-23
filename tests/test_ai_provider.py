@@ -72,14 +72,13 @@ def test_call_openai_uses_configured_model():
     assert called_model == "gpt-4o-mini"
 
 
-def test_call_openai_exits_on_error():
+def test_call_openai_raises_provider_error_on_error():
     with patch("scripts.ai_provider.openai.OpenAI") as MockOpenAI:
         mock_client = MagicMock()
         MockOpenAI.return_value = mock_client
         mock_client.chat.completions.create.side_effect = Exception("err")
-        with pytest.raises(SystemExit) as exc_info:
+        with pytest.raises(ap.ProviderError):
             ap.call_openai("test prompt", model="gpt-4o-mini")
-    assert exc_info.value.code == 1
 
 
 # ---------------------------------------------------------------------------
@@ -87,16 +86,15 @@ def test_call_openai_exits_on_error():
 # ---------------------------------------------------------------------------
 
 
-def test_call_claude_exits_on_api_error():
+def test_call_claude_raises_provider_error_on_api_error():
     with patch("scripts.ai_provider.anthropic.Anthropic") as MockAnthropic:
         mock_client = MagicMock()
         MockAnthropic.return_value = mock_client
         mock_client.messages.create.side_effect = anthropic.APIError(
             message="err", request=MagicMock(), body=None
         )
-        with pytest.raises(SystemExit) as exc_info:
+        with pytest.raises(ap.ProviderError):
             ap.call_claude("prompt")
-    assert exc_info.value.code == 1
 
 
 # ---------------------------------------------------------------------------
@@ -118,3 +116,57 @@ def test_call_ai_dispatches_openai():
     mock_call_openai.assert_called_once()
     call_kwargs = mock_call_openai.call_args
     assert call_kwargs.kwargs.get("model") == "gpt-4o-mini"
+
+
+# ---------------------------------------------------------------------------
+# fallback tests (FALL-01, FALL-02, FALL-03, TEST-02)
+# ---------------------------------------------------------------------------
+
+
+def test_call_ai_fallback_primary_fails_backup_succeeds():
+    with patch("scripts.ai_provider.call_claude") as mock_claude, \
+         patch("scripts.ai_provider.call_openai") as mock_openai:
+        mock_claude.side_effect = ap.ProviderError("claude down")
+        mock_openai.return_value = "openai response"
+        result = ap.call_ai("prompt", provider="anthropic", model_config={"openai_model": "gpt-4o-mini"})
+    assert result == "openai response"
+    mock_openai.assert_called_once()
+
+
+def test_call_ai_fallback_openai_primary_fails():
+    with patch("scripts.ai_provider.call_openai") as mock_openai, \
+         patch("scripts.ai_provider.call_claude") as mock_claude:
+        mock_openai.side_effect = ap.ProviderError("openai down")
+        mock_claude.return_value = "claude response"
+        result = ap.call_ai("prompt", provider="openai", model_config={"openai_model": "gpt-4o-mini"})
+    assert result == "claude response"
+    mock_claude.assert_called_once()
+
+
+def test_call_ai_fallback_both_fail_exits():
+    with patch("scripts.ai_provider.call_claude") as mock_claude, \
+         patch("scripts.ai_provider.call_openai") as mock_openai:
+        mock_claude.side_effect = ap.ProviderError("claude down")
+        mock_openai.side_effect = ap.ProviderError("openai down")
+        with pytest.raises(SystemExit) as exc_info:
+            ap.call_ai("prompt", provider="anthropic", model_config={"openai_model": "gpt-4o-mini"})
+    assert exc_info.value.code == 1
+
+
+def test_call_ai_fallback_logs_to_stderr(capsys):
+    with patch("scripts.ai_provider.call_claude") as mock_claude, \
+         patch("scripts.ai_provider.call_openai") as mock_openai:
+        mock_claude.side_effect = ap.ProviderError("claude down")
+        mock_openai.return_value = "ok"
+        ap.call_ai("prompt", provider="anthropic", model_config={"openai_model": "gpt-4o-mini"})
+    captured = capsys.readouterr()
+    assert "anthropic" in captured.err
+    assert "openai" in captured.err
+
+
+def test_backup_provider_anthropic_returns_openai():
+    assert ap._backup_provider("anthropic") == "openai"
+
+
+def test_backup_provider_openai_returns_anthropic():
+    assert ap._backup_provider("openai") == "anthropic"

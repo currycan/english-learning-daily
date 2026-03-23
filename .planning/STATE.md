@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Not started
-stopped_at: Phase 8 context gathered
-last_updated: "2026-03-23T06:36:32.262Z"
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-03-23T06:50:50.397Z"
 last_activity: 2026-03-23 — Roadmap created for v1.2
 progress:
   total_phases: 2
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
   percent: 75
 ---
 
@@ -65,6 +65,7 @@ v1.2 decisions:
 - [Phase 07-custom-endpoint-implementation]: Test 3 uses base_url kwarg directly on call_claude() to represent config.json path (CONF-03); requires Plan 02 to add base_url parameter
 - [Phase 07-custom-endpoint-implementation]: Conditional kwargs dict pattern — kwargs[key] set only when non-empty; avoids overriding SDK defaults with None or empty string
 - [Phase 07-custom-endpoint-implementation]: os.environ.get() or kwarg or '' chain handles GitHub Actions empty-string secret behavior for ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN
+- [Phase 08]: Summary table row format: backtick-wrap 'NAME (optional)' so test substring 'NAME (optional)' matches correctly
 
 ### Decisions Added (Phase 04-02)
 
@@ -91,6 +92,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T06:36:32.261Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/phases/08-third-party-provider-documentation/08-CONTEXT.md
+Last session: 2026-03-23T06:50:50.395Z
+Stopped at: Completed 08-01-PLAN.md
+Resume file: None

@@ -23,9 +23,9 @@ Requirements for third-party Claude-compatible API integration.
 
 ### Documentation
 
-- [ ] **DOCS-01**: docs/ai-providers.md includes third-party provider setup section (bilingual Chinese/English format)
-- [ ] **DOCS-02**: docs/ai-providers.md config.json example shows anthropic_base_url and anthropic_auth_token fields
-- [ ] **DOCS-03**: docs/ai-providers.md GitHub Secrets section explains adding custom base_url and token as secrets
+- [x] **DOCS-01**: docs/ai-providers.md includes third-party provider setup section (bilingual Chinese/English format)
+- [x] **DOCS-02**: docs/ai-providers.md config.json example shows anthropic_base_url and anthropic_auth_token fields
+- [x] **DOCS-03**: docs/ai-providers.md GitHub Secrets section explains adding custom base_url and token as secrets
 
 ### Tests
 
@@ -60,9 +60,9 @@ Requirements for third-party Claude-compatible API integration.
 | CONF-04 | Phase 7 | Complete |
 | TEST-01 | Phase 7 | Complete |
 | TEST-02 | Phase 7 | Complete |
-| DOCS-01 | Phase 8 | Pending |
-| DOCS-02 | Phase 8 | Pending |
-| DOCS-03 | Phase 8 | Pending |
+| DOCS-01 | Phase 8 | Complete |
+| DOCS-02 | Phase 8 | Complete |
+| DOCS-03 | Phase 8 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 13 total

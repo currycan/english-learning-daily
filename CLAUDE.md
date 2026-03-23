@@ -1,5 +1,9 @@
 # English Learning Daily — Claude Code Configuration
 
+## Communication
+
+- **回复语言：中文。** 所有对话回复使用中文，代码注释和文档内容除外（文档保持英中双语格式）。
+
 ## Project Overview
 
 Automated English learning task pusher. GitHub Actions triggers twice daily, reads `plan/state.json`, generates task content, and sends push notifications to iPhone via Bark.

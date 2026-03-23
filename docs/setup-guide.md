@@ -99,6 +99,12 @@ The key is injected into the CI environment — it is **never** stored in code.
 
 该 key 注入到 CI 环境中——**绝不**存储在代码中。
 
+### Step 7a — For OpenAI + dual-provider setup / 第 7a 步：OpenAI 双提供商配置（可选）
+
+For dual-provider setup (OpenAI + Anthropic with automatic fallback), see [`docs/ai-providers.md`](./ai-providers.md).
+
+如需配置 OpenAI + Anthropic 双提供商（含自动降级），请参阅 [`docs/ai-providers.md`](./ai-providers.md)。
+
 ### Step 8 — Verify content feed URLs (optional) / 第八步：验证内容源 URL（可选）
 
 The default RSS feeds are configured in `plan/config.json`:

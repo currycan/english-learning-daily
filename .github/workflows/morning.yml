@@ -5,6 +5,9 @@ on:
     - cron: '0 23 * * *'   # 23:00 UTC = 07:00 BJT (UTC+8)
   workflow_dispatch:         # Allow manual trigger for testing
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   push-morning:
     runs-on: ubuntu-latest

@@ -5,6 +5,9 @@ on:
     - cron: '0 22 * * *'   # 22:00 UTC = 06:00 BJT (UTC+8)
   workflow_dispatch:         # Allow manual trigger for testing
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   generate-content:
     runs-on: ubuntu-latest

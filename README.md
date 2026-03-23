@@ -92,9 +92,31 @@ python scripts/mark_done.py rating 4   # 提交本场景评分（1–5）
     └── evening.yml         # 每天 21:00 BJT 触发
 ```
 
+## 每日英语内容 / Daily English Content
+
+除学习任务推送外，系统每天 06:00（北京时间）自动抓取一篇真实英语新闻，调用 Claude AI 生成词汇、表达和理解练习，提交到 `content/YYYY-MM-DD.md`。
+
+In addition to push notifications, the system fetches a real English article daily at 06:00 BJT, uses Claude AI to generate vocabulary, chunking expressions, and comprehension exercises, and commits the result to `content/YYYY-MM-DD.md`.
+
+**需要额外设置 / Additional setup required：** 在 GitHub Secrets 中添加 `ANTHROPIC_API_KEY`。
+
+详见 → [docs/content-pipeline.md](docs/content-pipeline.md)
+
+## 文档 / Documentation
+
+| 文档 | Doc | 说明 |
+|------|-----|------|
+| [docs/setup-guide.md](docs/setup-guide.md) | Setup Guide | 完整部署步骤（推送 + 内容生成）/ Full deployment steps |
+| [docs/architecture.md](docs/architecture.md) | Architecture | 系统架构与设计决策 / System architecture & design decisions |
+| [docs/content-pipeline.md](docs/content-pipeline.md) | Content Pipeline | 每日内容生成流水线详解 / Daily content pipeline deep-dive |
+| [docs/script-reference.md](docs/script-reference.md) | Script Reference | 所有脚本的 API 参考 / All scripts API reference |
+| [docs/configuration.md](docs/configuration.md) | Configuration | 配置文件格式与参数说明 / Config file format & parameters |
+
 ## 依赖
 
 - Python 3.12+
 - `requests`（调用 Bark API）
+- `feedparser`（解析 RSS 源）
+- `anthropic`（调用 Claude API 生成练习）
 - GitHub Actions（定时触发）
 - [Bark](https://bark.day.app/)（iOS 推送）

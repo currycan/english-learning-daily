@@ -74,6 +74,8 @@ def call_claude(
         )
         return response.content[0].text
     except anthropic.APIError as e:
+        status = getattr(e, "status_code", "unknown")
+        print(f"ERROR: Claude API error — status={status} type={type(e).__name__} body={e}", file=sys.stderr)
         raise ProviderError(f"Claude API call failed: {e}") from e
 
 

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Not started
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-03-23T06:20:27.832Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-03-23T06:24:09.518Z"
 last_activity: 2026-03-23 — Roadmap created for v1.2
 progress:
   total_phases: 2
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
   percent: 75
 ---
 
@@ -63,6 +63,8 @@ v1.2 decisions:
 - [Phase 07-custom-endpoint-implementation]: No conditional YAML logic — GitHub returns empty string for missing secrets, call_claude() treats as absent
 - [Phase 07-custom-endpoint-implementation]: Backward compat test passes immediately — Anthropic() with no args already matches no-env-var contract; RED state confirmed by other 2 tests failing
 - [Phase 07-custom-endpoint-implementation]: Test 3 uses base_url kwarg directly on call_claude() to represent config.json path (CONF-03); requires Plan 02 to add base_url parameter
+- [Phase 07-custom-endpoint-implementation]: Conditional kwargs dict pattern — kwargs[key] set only when non-empty; avoids overriding SDK defaults with None or empty string
+- [Phase 07-custom-endpoint-implementation]: os.environ.get() or kwarg or '' chain handles GitHub Actions empty-string secret behavior for ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN
 
 ### Decisions Added (Phase 04-02)
 
@@ -89,6 +91,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T06:20:27.831Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-03-23T06:24:09.516Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None

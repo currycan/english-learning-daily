@@ -32,7 +32,7 @@ Full archive: `.planning/milestones/v1.1-ROADMAP.md`
 
 **v1.2 Third-Party Claude API**
 
-- [ ] **Phase 7: Custom Endpoint Implementation** - call_claude() accepts configurable base_url and auth_token from env vars and config.json, with tests
+- [x] **Phase 7: Custom Endpoint Implementation** - call_claude() accepts configurable base_url and auth_token from env vars and config.json, with tests (completed 2026-03-23)
 - [ ] **Phase 8: Third-Party Provider Documentation** - docs/ai-providers.md third-party section, updated config.json example, GitHub Secrets guide
 
 ## Phase Details
@@ -74,5 +74,5 @@ Plans:
 | 4. Provider Abstraction + OpenAI Integration | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 5. Fallback Logic | v1.1 | 1/1 | Complete | 2026-03-23 |
 | 6. AI Provider Documentation | v1.1 | 2/2 | Complete | 2026-03-23 |
-| 7. Custom Endpoint Implementation | 2/3 | In Progress|  | - |
+| 7. Custom Endpoint Implementation | 3/3 | Complete   | 2026-03-23 | - |
 | 8. Third-Party Provider Documentation | v1.2 | 0/TBD | Not started | - |

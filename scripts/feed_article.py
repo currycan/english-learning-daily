@@ -15,7 +15,7 @@ from pathlib import Path
 
 import feedparser
 
-from scripts.content_utils import content_path, get_beijing_date
+from scripts.content_utils import get_beijing_date
 
 
 class _TextExtractor(HTMLParser):
@@ -172,10 +172,6 @@ def _load_config() -> dict:
 
 def main() -> None:
     """Entry point: fetch today's article and print JSON envelope to stdout."""
-    today = get_beijing_date()
-    if content_path(today).exists():
-        print(f"[feed_article] {today} already exists, skipping.", file=sys.stderr)
-        sys.exit(0)
     config = _load_config()
     envelope = fetch_article(config)
     print(json.dumps(envelope))

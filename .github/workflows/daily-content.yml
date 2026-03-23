@@ -31,6 +31,11 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -eo pipefail
+          TODAY_FILE=$(python -c "from scripts.content_utils import get_beijing_date, content_path; print(content_path(get_beijing_date()))")
+          if [ -f "$TODAY_FILE" ]; then
+            echo "Content for $(basename "$TODAY_FILE" .md) already exists — skipping."
+            exit 0
+          fi
           python -m scripts.feed_article | \
           python -m scripts.generate_exercises | \
           python -m scripts.commit_content

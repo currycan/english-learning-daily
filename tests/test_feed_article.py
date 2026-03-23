@@ -71,18 +71,6 @@ def test_no_match_fallback():
     assert result["title"] == "Sports news"
 
 
-def test_idempotency_guard(tmp_path, monkeypatch):
-    """main() exits 0 when today's content file already exists."""
-    from scripts import feed_article
-    fake_path = tmp_path / "2026-03-23.md"
-    fake_path.write_text("exists")
-    monkeypatch.setattr(feed_article, "content_path", lambda d: fake_path)
-    monkeypatch.setattr(feed_article, "get_beijing_date", lambda: fake_path.stem)
-    with pytest.raises(SystemExit) as exc:
-        feed_article.main()
-    assert exc.value.code == 0
-
-
 # --- FTCH-02: Fallback and retry ---
 
 def test_fallback_on_primary_failure(sample_config):

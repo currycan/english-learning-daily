@@ -24,13 +24,14 @@ def test_skips_when_file_exists(tmp_path, monkeypatch):
 
 
 def test_writes_placeholder_when_file_absent(tmp_path, monkeypatch):
-    """If today's content file does not exist, main() creates it."""
+    """main() writes stdin content to the content path when file does not exist."""
     today = date(2026, 3, 23)
     fake_path = tmp_path / "2026-03-23.md"
 
     monkeypatch.setattr(cc, "get_beijing_date", lambda: today)
     monkeypatch.setattr(cc, "content_path", lambda d: fake_path)
     monkeypatch.setattr(cc, "CONTENT_DIR", tmp_path)
+    monkeypatch.setattr("sys.stdin", __import__("io").StringIO("# 2026-03-23\n\nLesson content.\n"))
 
     with patch("scripts.commit_content.git_commit_and_push") as mock_git:
         cc.main()

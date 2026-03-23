@@ -24,13 +24,16 @@ def main() -> None:
     path = content_path(today)
 
     if path.exists():
-        print(f"Content for {today} already exists — skipping.")
+        print(f"Content for {today} already exists — skipping.", file=sys.stderr)
         sys.exit(0)
 
-    CONTENT_DIR.mkdir(parents=True, exist_ok=True)
-    path.write_text(f"# {today}\n\n_Content placeholder — Phase 1_\n")
-    print(f"Wrote placeholder: {path}")
+    content = sys.stdin.read()
+    if not content.strip():
+        print("ERROR: No Markdown content received from stdin", file=sys.stderr)
+        sys.exit(1)
 
+    CONTENT_DIR.mkdir(parents=True, exist_ok=True)
+    path.write_text(content)
     git_commit_and_push(path, today)
 
 

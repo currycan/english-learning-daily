@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Dual AI Provider
-status: completed
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-03-23T05:42:33.245Z"
-last_activity: 2026-03-23 — Phase 5 plan 01 complete (provider fallback)
+milestone: v1.2
+milestone_name: Third-Party Claude API
+status: defining_requirements
+stopped_at: —
+last_updated: "2026-03-23T00:00:00.000Z"
+last_activity: 2026-03-23 — Milestone v1.2 started
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
-  percent: 75
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Every day a ready-to-read English lesson lands in git — real content with targeted vocabulary, chunking expressions, and exercises to deepen understanding.
-**Current focus:** Phase 5 — Fallback Logic
+**Current focus:** Defining requirements for v1.2
 
 ## Current Position
 
-Phase: 5 of 6 (Fallback Logic)
-Plan: 1 of 1 in current phase (COMPLETE)
-Status: Phase 5 complete — all plans done
-Last activity: 2026-03-23 — Phase 5 plan 01 complete (provider fallback)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-23 — Milestone v1.2 started
 
 Progress: [███████░░░] 75% (v1.0 complete, Phase 4 complete, Phase 5 complete)
 

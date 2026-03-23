@@ -28,9 +28,22 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 - ✓ AI providers configuration guide docs/ai-providers.md (DOCS-01–04) — v1.1
 - ✓ OpenAI and fallback unit tests (TEST-01, TEST-02) — v1.1
 
+## Current Milestone: v1.2 Third-Party Claude API
+
+**Goal:** Extend the Anthropic provider to support third-party Claude-compatible API endpoints via configurable base URL and auth token.
+
+**Target features:**
+- Custom `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` support in `call_claude()`
+- Configuration via env vars, `plan/config.json`, and GitHub Secrets
+- Updated docs covering third-party provider setup
+
 ### Active
 
-(None — planning next milestone)
+- [ ] Anthropic client accepts configurable base_url and auth_token
+- [ ] Env vars (ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN) take highest priority
+- [ ] config.json fields for anthropic_base_url / anthropic_auth_token
+- [ ] GitHub Secrets wired in CI workflow
+- [ ] docs/ai-providers.md updated with third-party provider guide
 
 ### Out of Scope
 
@@ -82,4 +95,4 @@ Provider switching: `AI_PROVIDER` env var > `ai_provider` in `plan/config.json` 
 | Bilingual docs format (English + Chinese per line) | Matches existing docs/setup-guide.md and docs/configuration.md style | ✓ Good |
 
 ---
-*Last updated: 2026-03-23 after v1.1 milestone*
+*Last updated: 2026-03-23 after v1.2 milestone start*

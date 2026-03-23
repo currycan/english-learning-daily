@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Not started
-stopped_at: Phase 7 context gathered
-last_updated: "2026-03-23T06:06:35.420Z"
+stopped_at: Completed 07-03-PLAN.md
+last_updated: "2026-03-23T06:20:25.140Z"
 last_activity: 2026-03-23 — Roadmap created for v1.2
 progress:
   total_phases: 2
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 2
   percent: 75
 ---
 
@@ -59,6 +59,10 @@ v1.2 decisions:
 - TEST-01 and TEST-02 embedded in Phase 7 per TDD practice established in v1.1
 - DOCS requirements isolated in Phase 8 (depends on Phase 7 implementation being stable)
 - Priority order: env vars (ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN) > config.json fields > SDK defaults
+- [Phase 07-custom-endpoint-implementation]: New env vars placed in step-level env block only, not top-level — secrets are scoped to the generate step
+- [Phase 07-custom-endpoint-implementation]: No conditional YAML logic — GitHub returns empty string for missing secrets, call_claude() treats as absent
+- [Phase 07-custom-endpoint-implementation]: Backward compat test passes immediately — Anthropic() with no args already matches no-env-var contract; RED state confirmed by other 2 tests failing
+- [Phase 07-custom-endpoint-implementation]: Test 3 uses base_url kwarg directly on call_claude() to represent config.json path (CONF-03); requires Plan 02 to add base_url parameter
 
 ### Decisions Added (Phase 04-02)
 
@@ -85,6 +89,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-23T06:06:35.418Z
-Stopped at: Phase 7 context gathered
-Resume file: .planning/phases/07-custom-endpoint-implementation/07-CONTEXT.md
+Last session: 2026-03-23T06:20:15.604Z
+Stopped at: Completed 07-03-PLAN.md
+Resume file: None

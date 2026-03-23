@@ -12,14 +12,14 @@ Requirements for third-party Claude-compatible API integration.
 - [ ] **TPROV-01**: call_claude() uses custom base_url when configured (env var or config.json)
 - [ ] **TPROV-02**: call_claude() uses custom auth_token when configured, independent of ANTHROPIC_API_KEY
 - [ ] **TPROV-03**: When no custom base_url/auth_token configured, behavior is identical to v1.1 (backward compatible)
-- [ ] **TPROV-04**: Fallback chain works correctly when primary provider uses a third-party Claude endpoint
+- [x] **TPROV-04**: Fallback chain works correctly when primary provider uses a third-party Claude endpoint
 
 ### Configuration
 
 - [ ] **CONF-01**: ANTHROPIC_BASE_URL env var is read and applied at highest priority
 - [ ] **CONF-02**: ANTHROPIC_AUTH_TOKEN env var is read and applied at highest priority
 - [ ] **CONF-03**: plan/config.json supports anthropic_base_url and anthropic_auth_token fields (lower priority than env vars)
-- [ ] **CONF-04**: GitHub Actions workflow injects ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN from repository secrets
+- [x] **CONF-04**: GitHub Actions workflow injects ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN from repository secrets
 
 ### Documentation
 
@@ -53,11 +53,11 @@ Requirements for third-party Claude-compatible API integration.
 | TPROV-01 | Phase 7 | Pending |
 | TPROV-02 | Phase 7 | Pending |
 | TPROV-03 | Phase 7 | Pending |
-| TPROV-04 | Phase 7 | Pending |
+| TPROV-04 | Phase 7 | Complete |
 | CONF-01 | Phase 7 | Pending |
 | CONF-02 | Phase 7 | Pending |
 | CONF-03 | Phase 7 | Pending |
-| CONF-04 | Phase 7 | Pending |
+| CONF-04 | Phase 7 | Complete |
 | TEST-01 | Phase 7 | Pending |
 | TEST-02 | Phase 7 | Pending |
 | DOCS-01 | Phase 8 | Pending |

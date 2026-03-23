@@ -67,7 +67,11 @@ Plans:
   2. The document contains step-by-step instructions for obtaining an Anthropic API key from console.anthropic.com
   3. The document explains how to store `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` as GitHub Actions Repository Secrets
   4. The document states the priority rule: `AI_PROVIDER` env var overrides `ai_provider` in `plan/config.json`
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Create docs/ai-providers.md with TDD content assertions (DOCS-01, DOCS-02, DOCS-03, DOCS-04)
+- [ ] 06-02-PLAN.md — Update docs/configuration.md secrets table + docs/setup-guide.md cross-link (DOCS-03)
 
 ## Progress
 
@@ -78,4 +82,4 @@ Plans:
 | 3. AI Pipeline | v1.0 | 3/3 | Complete | 2026-03-23 |
 | 4. Provider Abstraction + OpenAI Integration | 2/2 | Complete   | 2026-03-23 | - |
 | 5. Fallback Logic | 1/1 | Complete   | 2026-03-23 | - |
-| 6. AI Provider Documentation | v1.1 | 0/TBD | Not started | - |
+| 6. AI Provider Documentation | v1.1 | 0/2 | Not started | - |

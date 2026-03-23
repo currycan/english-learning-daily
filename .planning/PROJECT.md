@@ -2,68 +2,76 @@
 
 ## What This Is
 
-An automated system that fetches a real English article from public sources (VOA, BBC, or similar) each day, uses AI to generate B1-B2 level companion exercises (vocabulary highlights and comprehension questions), and commits the combined content as a date-named Markdown file to git. The goal is a growing personal library of learning materials readable directly from the repository.
+An automated system that fetches a real English article from public sources (VOA, BBC) each day, uses the Claude API to generate B1-B2 companion exercises (vocabulary highlights, chunking expressions, comprehension questions with answers), and commits the combined lesson as a date-named Markdown file to git. Ships daily to `content/YYYY-MM-DD.md` via GitHub Actions.
 
 ## Core Value
 
-Every day a ready-to-read English lesson lands in git — real content, not generated filler, with targeted vocabulary and exercises to deepen understanding.
+Every day a ready-to-read English lesson lands in git — real content, not generated filler, with targeted vocabulary, chunking expressions, and exercises to deepen understanding.
 
 ## Requirements
 
 ### Validated
 
-- ✓ Daily GitHub Actions scheduling (morning/evening) — existing
-- ✓ Bark push notification delivery — existing
-- ✓ State tracking in `plan/state.json` — existing
-- ✓ Python script pipeline architecture (stdout→stdin JSON) — existing
-- ✓ Git commit automation from CI — existing
+- ✓ GitHub Actions daily cron scheduling — v1.0
+- ✓ Git commit automation from CI with Beijing-timezone filename — v1.0
+- ✓ Idempotency guard (skip duplicate commits) — v1.0
+- ✓ RSS fetch from VOA Special English (primary) with BBC Learning English fallback — v1.0
+- ✓ Article Envelope JSON output (title, body, source_url) — v1.0
+- ✓ AI extraction of 5–8 vocabulary words with definitions and in-article examples — v1.0
+- ✓ AI extraction of 3–5 chunking expressions with Chinese meanings and usage examples — v1.0
+- ✓ AI generation of 3–5 comprehension questions with answers — v1.0
+- ✓ Four-section Markdown lesson file (article + vocabulary + chunks + Q&A) — v1.0
+- ✓ CI exits non-zero and marks job failed on fetch or AI generation failure — v1.0
 
 ### Active
 
-- [ ] Fetch one English article per day from a public RSS/API source (VOA Special English or BBC Learning English)
-- [ ] Filter articles to B1-B2 reading level (short sentences, common vocabulary)
-- [ ] Use AI (Claude API) to extract 5–8 key vocabulary words with definitions and example sentences
-- [ ] Use AI to generate 3–5 comprehension questions with answers
-- [ ] Combine article + vocabulary + questions into a single Markdown file
-- [ ] Commit file to `content/YYYY-MM-DD.md` via GitHub Actions daily
-- [ ] Skip duplicate commits if article already exists for that date
-- [ ] Handle source fetch failures gracefully (fallback or retry)
+- [ ] Topic tagging (science, health, education, etc.) in file header (QUAL-01)
+- [ ] Vocabulary reuse detection — skip words seen in previous N files (QUAL-02)
+- [ ] CEFR word-level annotation on vocabulary entries A2/B1/B2 (QUAL-03)
+- [ ] Weekly digest: auto-generated `content/week-NN.md` (OPS-02)
 
 ### Out of Scope
 
-- Push notifications for content (separate system, not needed here) — user reads directly from git
-- Interactive exercises or quizzes — static Markdown only for v1
-- Multiple articles per day — one focused lesson is better than overwhelm
-- Audio or video content — text only for v1
-- User progress tracking for this content — separate concern
+| Feature | Reason |
+|---------|--------|
+| Push notifications for content | Separate system; user reads from git directly |
+| Interactive exercises / quiz UI | Static Markdown only; no web app |
+| Multiple articles per day | One focused lesson beats information overload |
+| Audio or video content | Text only |
+| Grammar exercises | Chunking + comprehension sufficient for B1-B2 target |
+| User progress tracking | Out of scope; no state tracking for content consumption |
+| Web scraping (non-RSS) | RSS-only keeps implementation stable and legal |
 
 ## Context
 
-The repository already has a working GitHub Actions + Python pipeline for push notifications. The new content generation system will follow the same architectural patterns (modular Python scripts, CI-triggered, git-committed output) but targets a different output: static learning files instead of push payloads.
+**Shipped v1.0** with ~1,750 LOC Python (scripts + tests).
+Tech stack: Python, feedparser 6.0.12, anthropic 0.86.0, GitHub Actions.
+First live lesson committed 2026-03-23.
 
-Content sources with no auth required:
-- **VOA Learning English** — RSS at `feeds.voanews.com/learningenglish/english` — designed for non-native speakers
-- **BBC Learning English** — RSS available, B1-B2 content
-- **The Guardian** — public API with free tier, rich article content
-
-AI generation will use the Claude API (Anthropic) to ensure consistent, high-quality exercises without depending on fragile scraped content.
+Primary RSS source changed during development from VOA `feeds.voanews.com` to `newsinlevels.com/feed` — the only verified URL returning 800+ character bodies via `content:encoded`.
 
 ## Constraints
 
-- **Tech stack**: Python (matches existing codebase), no new runtime dependencies beyond `requests` and `anthropic` SDK
-- **API costs**: Claude API usage must be minimal — one call per day, short prompt
+- **Tech stack**: Python, no new runtime dependencies beyond `feedparser` and `anthropic` SDK
+- **API costs**: Claude API usage minimal — one call per day (claude-3-5-haiku-20241022)
 - **No secrets in code**: `ANTHROPIC_API_KEY` from GitHub Secrets only
-- **File format**: Pure Markdown, no frontmatter complexity, readable in any git viewer
+- **File format**: Pure Markdown, no frontmatter, readable in any git viewer
 - **CI**: GitHub Actions (existing infrastructure)
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| VOA Special English as primary source | Explicitly designed for B1-B2 learners, free RSS, stable | — Pending |
-| Claude API for exercise generation | Already available in this project's ecosystem, high quality | — Pending |
-| One file per day in `content/` | Simple, browsable, no database needed | — Pending |
-| Markdown only (no HTML/JSON) | Readable anywhere git is viewable | — Pending |
+| newsinlevels.com/feed as primary RSS | Only verified URL returning 800+ char bodies via content:encoded | ✓ Good |
+| BBC Learning English as fallback | Locked user decision; feedparser handles gracefully | ✓ Good |
+| claude-3-5-haiku-20241022 (pinned exact) | Cost-efficient at ~1,400 tokens/day, reproducible CI | ✓ Good |
+| One Claude API call per day | Single structured JSON prompt covers vocab + chunks + questions | ✓ Good |
+| `set -eo pipefail` in CI pipeline | Ensures pipe failures propagate — RSS failure fails CI job | ✓ Good |
+| datetime.now(tz=BEIJING_TZ) not date.today() | Correctly derives Beijing date on UTC GitHub Actions runners | ✓ Good |
+| Idempotency via path.exists() + sys.exit(0) | Prevents duplicate commits, clean exit on second run | ✓ Good |
+| anthropic.Anthropic() inside call_claude() | Enables clean patching in unit tests without module-level state | ✓ Good |
+| HTMLParser subclass for HTML cleaning | Handles nested tags and entities correctly vs regex | ✓ Good |
+| TDD throughout (RED → GREEN per plan) | Caught integration issues early; all tests pass in CI | ✓ Good |
 
 ---
-*Last updated: 2026-03-22 after initialization*
+*Last updated: 2026-03-23 after v1.0 milestone*

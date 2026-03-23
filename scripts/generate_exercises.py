@@ -133,6 +133,7 @@ def main() -> None:
     provider = resolve_provider(config)
     model_config = {
         "openai_model": config.get("openai_model", "gpt-4o-mini"),
+        "claude_model": config.get("claude_model"),
         "anthropic_base_url": config.get("anthropic_base_url"),
         "anthropic_auth_token": config.get("anthropic_auth_token"),
     }

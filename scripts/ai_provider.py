@@ -44,12 +44,14 @@ def call_claude(
     max_tokens: int = 2048,
     base_url: str | None = None,
     auth_token: str | None = None,
+    model: str | None = None,
 ) -> str:
     """Call Claude API. Returns response text. Raises ProviderError on API error.
 
     base_url and auth_token enable third-party Claude-compatible endpoints.
     Priority: env vars (ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN) > kwargs > SDK defaults.
     Empty string is treated as absent (GitHub Actions returns "" for unset secrets).
+    model overrides CLAUDE_MODEL constant (useful for third-party providers with different model names).
     """
     # Resolve effective values: env var takes highest priority, then kwarg, then absent.
     effective_url = os.environ.get("ANTHROPIC_BASE_URL") or base_url or ""
@@ -61,11 +63,12 @@ def call_claude(
     if effective_key:
         kwargs["api_key"] = effective_key
     endpoint = effective_url or "https://api.anthropic.com"
-    print(f"INFO: Claude endpoint: {endpoint}", file=sys.stderr)
+    effective_model = model or CLAUDE_MODEL
+    print(f"INFO: Claude endpoint: {endpoint}, model: {effective_model}", file=sys.stderr)
     client = anthropic.Anthropic(**kwargs)
     try:
         response = client.messages.create(
-            model=CLAUDE_MODEL,
+            model=effective_model,
             max_tokens=max_tokens,
             messages=[{"role": "user", "content": prompt}],
         )
@@ -105,6 +108,7 @@ def _dispatch(prompt: str, provider: str, model_config: dict, max_tokens: int) -
     return call_claude(
         prompt,
         max_tokens=max_tokens,
+        model=model_config.get("claude_model"),
         base_url=model_config.get("anthropic_base_url"),
         auth_token=model_config.get("anthropic_auth_token"),
     )

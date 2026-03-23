@@ -131,7 +131,11 @@ def main() -> None:
 
     config = _load_config()
     provider = resolve_provider(config)
-    model_config = {"openai_model": config.get("openai_model", "gpt-4o-mini")}
+    model_config = {
+        "openai_model": config.get("openai_model", "gpt-4o-mini"),
+        "anthropic_base_url": config.get("anthropic_base_url"),
+        "anthropic_auth_token": config.get("anthropic_auth_token"),
+    }
 
     prompt = build_prompt(envelope)
     raw_response = call_ai(prompt, provider=provider, model_config=model_config)

@@ -96,6 +96,51 @@
 
 ---
 
+## Milestone: v1.2 — Third-Party Claude API
+
+**Shipped:** 2026-03-23
+**Phases:** 2 (7-8) | **Plans:** 4 | **Timeline:** same day as v1.0/v1.1
+
+### What Was Built
+
+- `call_claude()` extended with `base_url` and `auth_token` optional params; conditional kwargs pattern prevents SDK default override
+- Priority chain: `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` env vars > `plan/config.json` fields > Anthropic SDK defaults; backward compat confirmed via test
+- CI workflow gains `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` in step-level env from GitHub Secrets
+- `docs/ai-providers.md` Section 5: bilingual third-party Claude API setup guide (env vars, config.json, GitHub Secrets)
+- 5 new pytest assertions in `test_ai_provider_docs.py` for DOCS-01/02/03 (TDD RED → GREEN approach)
+
+### What Worked
+
+- TDD for documentation (write assertions first) continued to prove its worth — immediately surfaced exact strings needed in docs
+- Conditional kwargs dict pattern is cleaner than overriding with `None` — a pattern to carry forward for any optional SDK client params
+- Phase separation (implementation Phase 7 → docs Phase 8) kept each phase's tests focused and independent
+- Step-level env vars (not top-level) for optional secrets is the right scoping — zero noise when secrets are absent
+
+### What Was Inefficient
+
+- SUMMARY.md files don't have `requirements-completed` frontmatter — the 3-source audit cross-reference fell back to manual verification. A simpler SUMMARY format that auto-populates this field would reduce audit overhead.
+- Nyquist VALIDATION.md files were created at phase start but never completed — both phases shipped as `nyquist_compliant: false, status: draft`. Either skip Nyquist or complete it; half-done is noise.
+
+### Patterns Established
+
+- `os.environ.get("KEY") or kwarg or ""` chain for layered env var / kwarg / absent priority — handles GitHub empty-string secret behavior cleanly
+- Conditional SDK kwargs dict: `if val: kwargs["key"] = val` before `SDK(**kwargs)` — never override SDK defaults with empty values
+- Optional config fields documented as `NAME (optional)` with backtick wrapping — enables reliable pytest substring match
+
+### Key Lessons
+
+1. Empty string from GitHub Secrets (`${{ secrets.MISSING }}`) is not `None` — always chain `or kwarg or ""` to collapse it correctly
+2. Step-level env block (not top-level) is correct for secrets that only apply to one step — prevents accidental injection into setup/teardown steps
+3. Nyquist validation files need a clear decision at project start: use them or don't. Draft-but-never-completed files add noise to audits without value.
+
+### Cost Observations
+
+- Model mix: ~0% opus, ~90% sonnet, ~10% haiku
+- Sessions: ~3 (milestone setup, phase 7 execution, phase 8 execution)
+- Notable: shortest milestone yet — 2 phases, 4 plans, completed same day; tight scope was the key factor
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -104,6 +149,7 @@
 |-----------|--------|-------|------------|
 | v1.0 | 3 | 7 | First milestone — established TDD + pipe patterns |
 | v1.1 | 3 | 5 | Provider abstraction + fallback; documentation TDD pattern |
+| v1.2 | 2 | 4 | Third-party endpoint config; conditional SDK kwargs pattern |
 
 ### Cumulative Quality
 
@@ -111,3 +157,4 @@
 |-----------|-------|----------|-----------------|
 | v1.0 | 24 | ~85% scripts | feedparser, anthropic |
 | v1.1 | 115 | ~90% scripts | openai 2.29.0 |
+| v1.2 | 130+ | ~90% scripts | none |

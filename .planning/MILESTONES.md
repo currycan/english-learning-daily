@@ -1,5 +1,25 @@
 # Milestones
 
+## v1.2 Third-Party Claude API (Shipped: 2026-03-23)
+
+**Phases completed:** 2 phases (7-8), 4 plans
+
+**Key accomplishments:**
+1. Extended `call_claude()` with `base_url` and `auth_token` optional params + conditional kwargs — third-party Claude endpoints configurable via two env vars or `plan/config.json` fields
+2. Priority chain: `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` env vars override `plan/config.json`; absent config falls back to standard Anthropic SDK behavior with zero regressions
+3. CI workflow gains `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` in step-level env from GitHub Secrets — empty/unset secrets treated as absent by `call_claude()`
+4. Bilingual (EN+ZH) Section 5 added to `docs/ai-providers.md` covering env var setup, `config.json` example, and GitHub Secrets guide
+5. `tests/test_ai_provider_docs.py` extended with 5 automated assertions covering all 3 DOCS requirements (DOCS-01/02/03)
+
+**Stats:**
+- LOC: ~2,300 Python (scripts + tests)
+- Timeline: 2026-03-23 (same day)
+- Tests: 130+ passing across all modules
+- Files changed: 26 files, 3,095 insertions, 83 deletions
+- Git range: `docs: start milestone v1.2 Third-Party Claude API` → `docs(phase-08): complete phase execution`
+
+---
+
 ## v1.1 Dual AI Provider (Shipped: 2026-03-23)
 
 **Phases completed:** 3 phases (4-6), 5 plans

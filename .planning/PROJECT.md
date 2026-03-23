@@ -2,7 +2,7 @@
 
 ## What This Is
 
-An automated system that fetches a real English article from public sources each day, uses an AI provider (Claude or OpenAI, switchable via config with automatic fallback) to generate B1-B2 companion exercises (vocabulary highlights, chunking expressions, comprehension questions with answers), and commits the combined lesson as a date-named Markdown file to git. Ships daily to `content/YYYY-MM-DD.md` via GitHub Actions.
+An automated system that fetches a real English article from public sources each day, uses an AI provider (Claude — including third-party Claude-compatible APIs — or OpenAI, switchable via config with automatic fallback) to generate B1-B2 companion exercises (vocabulary highlights, chunking expressions, comprehension questions with answers), and commits the combined lesson as a date-named Markdown file to git. Ships daily to `content/YYYY-MM-DD.md` via GitHub Actions.
 
 ## Core Value
 
@@ -27,23 +27,16 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 - ✓ Automatic fallback to backup provider on API failure (FALL-01, FALL-02, FALL-03) — v1.1
 - ✓ AI providers configuration guide docs/ai-providers.md (DOCS-01–04) — v1.1
 - ✓ OpenAI and fallback unit tests (TEST-01, TEST-02) — v1.1
-
-## Current Milestone: v1.2 Third-Party Claude API
-
-**Goal:** Extend the Anthropic provider to support third-party Claude-compatible API endpoints via configurable base URL and auth token.
-
-**Target features:**
-- Custom `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` support in `call_claude()`
-- Configuration via env vars, `plan/config.json`, and GitHub Secrets
-- Updated docs covering third-party provider setup
+- ✓ Anthropic client accepts configurable base_url and auth_token (TPROV-01, TPROV-02, TPROV-03, TPROV-04) — v1.2
+- ✓ Env vars ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN at highest priority (CONF-01, CONF-02) — v1.2
+- ✓ plan/config.json fields anthropic_base_url / anthropic_auth_token as lower-priority fallback (CONF-03) — v1.2
+- ✓ GitHub Actions CI injects ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN from secrets (CONF-04) — v1.2
+- ✓ docs/ai-providers.md bilingual third-party provider section (DOCS-01, DOCS-02, DOCS-03) — v1.2
+- ✓ Unit tests for custom endpoint path and backward compat (TEST-01, TEST-02) — v1.2
 
 ### Active
 
-- [ ] Anthropic client accepts configurable base_url and auth_token
-- [ ] Env vars (ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN) take highest priority
-- [ ] config.json fields for anthropic_base_url / anthropic_auth_token
-- [ ] GitHub Secrets wired in CI workflow
-- [ ] docs/ai-providers.md updated with third-party provider guide
+(None — define next milestone goals via `/gsd:new-milestone`)
 
 ### Out of Scope
 
@@ -60,12 +53,13 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 
 ## Context
 
-**Shipped v1.1** with ~2,153 LOC Python (scripts + tests).
+**Shipped v1.2** with ~2,300 LOC Python (scripts + tests).
 Tech stack: Python, feedparser 6.0.12, anthropic 0.86.0, openai 2.29.0, GitHub Actions.
-First live lesson committed 2026-03-23. Dual-provider support shipped same day.
+First live lesson committed 2026-03-23. Dual-provider support and third-party Claude API support shipped same day.
 
 Primary RSS source: `newsinlevels.com/feed` (only verified URL returning 800+ char bodies via `content:encoded`).
 Provider switching: `AI_PROVIDER` env var > `ai_provider` in `plan/config.json` > default `anthropic`.
+Third-party Claude: `ANTHROPIC_BASE_URL` + `ANTHROPIC_AUTH_TOKEN` env vars > `plan/config.json` fields > Anthropic SDK defaults.
 
 ## Constraints
 
@@ -93,6 +87,10 @@ Provider switching: `AI_PROVIDER` env var > `ai_provider` in `plan/config.json` 
 | _backup_provider uses set difference on VALID_PROVIDERS | Deterministic with exactly two providers; no hardcoded pairing | ✓ Good |
 | openai.OpenAI() inside call_openai() | Mirrors anthropic pattern; enables clean patching in tests | ✓ Good |
 | Bilingual docs format (English + Chinese per line) | Matches existing docs/setup-guide.md and docs/configuration.md style | ✓ Good |
+| Conditional kwargs dict for `anthropic.Anthropic()` | Only populate `base_url`/`api_key` when non-empty — avoids overriding SDK defaults with None or empty string | ✓ Good |
+| `os.environ.get() or kwarg or ''` chain for env var priority | Handles GitHub Actions empty-string secret behavior cleanly | ✓ Good |
+| `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` in step-level env only | Scopes optional secrets to the generate step, not the top-level workflow env | ✓ Good |
+| Summary table row format: backtick-wrap `NAME (optional)` | Allows pytest substring match `"ANTHROPIC_BASE_URL (optional)" in content` to work reliably | ✓ Good |
 
 ---
-*Last updated: 2026-03-23 after v1.2 milestone start*
+*Last updated: 2026-03-23 after v1.2 milestone*

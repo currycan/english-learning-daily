@@ -33,6 +33,10 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 - ✓ GitHub Actions CI injects ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN from secrets (CONF-04) — v1.2
 - ✓ docs/ai-providers.md bilingual third-party provider section (DOCS-01, DOCS-02, DOCS-03) — v1.2
 - ✓ Unit tests for custom endpoint path and backward compat (TEST-01, TEST-02) — v1.2
+- ✓ Migrate from dual-provider (Anthropic + OpenAI) to single Gemini provider via google-genai SDK — v1.3
+- ✓ Remove anthropic/openai SDKs; rewrite ai_provider.py as call_gemini()-only module — v1.3
+- ✓ Update CI workflow to inject only GEMINI_API_KEY — v1.3
+- ✓ Rewrite all tests and docs for Gemini-only setup (114 passing) — v1.3
 
 ### Active
 
@@ -53,17 +57,17 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 
 ## Context
 
-**Shipped v1.2** (now on Gemini). ~2,300 LOC Python (scripts + tests).
+**Shipped v1.3** (Gemini-only). ~2,300 LOC Python (scripts + tests).
 Tech stack: Python, feedparser 6.0.12, google-genai 1.68.0, GitHub Actions.
-First live lesson committed 2026-03-23. Migrated to Gemini-only provider 2026-03-24 (Phase 01 complete).
+First live lesson committed 2026-03-23. Migrated to Gemini-only provider 2026-03-24 (v1.3 complete).
 
 Primary RSS source: `newsinlevels.com/feed` (only verified URL returning 800+ char bodies via `content:encoded`).
-AI provider: Google Gemini (`gemini-2.0-flash-lite` via `google-genai` SDK). Single provider, no fallback.
+AI provider: Google Gemini (`gemini-2.5-flash-lite` via `google-genai` SDK). Single provider, no fallback.
 
 ## Constraints
 
 - **Tech stack**: Python; `feedparser`, `google-genai` SDK
-- **API costs**: one AI call per day; `gemini-2.0-flash-lite` is within free tier for ~1,400 tokens/day
+- **API costs**: one AI call per day; `gemini-2.5-flash-lite` is within free tier for ~1,400 tokens/day
 - **No secrets in code**: `GEMINI_API_KEY` from GitHub Secrets only
 - **File format**: Pure Markdown, no frontmatter, readable in any git viewer
 - **CI**: GitHub Actions (existing infrastructure)
@@ -74,22 +78,19 @@ AI provider: Google Gemini (`gemini-2.0-flash-lite` via `google-genai` SDK). Sin
 |----------|-----------|---------|
 | newsinlevels.com/feed as primary RSS | Only verified URL returning 800+ char bodies via content:encoded | ✓ Good |
 | BBC Learning English as fallback | Locked user decision; feedparser handles gracefully | ✓ Good |
-| claude-haiku-4-5-20251001 (pinned exact) | Cost-efficient at ~1,400 tokens/day, reproducible CI | ✓ Good |
+| gemini-2.5-flash-lite (pinned in config + constant) | Cost-efficient, within free tier at ~1,400 tokens/day; overridable via config.json | ✓ Good |
 | One AI call per day | Single structured JSON prompt covers vocab + chunks + questions | ✓ Good |
 | `set -eo pipefail` in CI pipeline | Ensures pipe failures propagate — RSS failure fails CI job | ✓ Good |
 | datetime.now(tz=BEIJING_TZ) not date.today() | Correctly derives Beijing date on UTC GitHub Actions runners | ✓ Good |
 | Idempotency via path.exists() + sys.exit(0) | Prevents duplicate commits, clean exit on second run | ✓ Good |
-| anthropic.Anthropic() inside call_claude() | Enables clean patching in unit tests without module-level state | ✓ Good |
+| genai.Client() inside call_gemini() | Enables clean patching in unit tests without module-level state | ✓ Good |
 | HTMLParser subclass for HTML cleaning | Handles nested tags and entities correctly vs regex | ✓ Good |
 | TDD throughout (RED → GREEN per plan) | Caught integration issues early; all tests pass in CI | ✓ Good |
-| ProviderError exception (not sys.exit) in call_claude/call_openai | Keeps low-level callers composable; fallback logic in call_ai | ✓ Good |
-| _backup_provider uses set difference on VALID_PROVIDERS | Deterministic with exactly two providers; no hardcoded pairing | ✓ Good |
-| openai.OpenAI() inside call_openai() | Mirrors anthropic pattern; enables clean patching in tests | ✓ Good |
-| Bilingual docs format (English + Chinese per line) | Matches existing docs/setup-guide.md and docs/configuration.md style | ✓ Good |
-| Conditional kwargs dict for `anthropic.Anthropic()` | Only populate `base_url`/`api_key` when non-empty — avoids overriding SDK defaults with None or empty string | ✓ Good |
+| ProviderError exception (not sys.exit) in call_gemini | Keeps caller composable; caller decides how to handle failures | ✓ Good |
+| Bilingual docs format (English + Chinese per line) | Matches existing docs style across all project docs | ✓ Good |
 | `os.environ.get() or kwarg or ''` chain for env var priority | Handles GitHub Actions empty-string secret behavior cleanly | ✓ Good |
-| `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` in step-level env only | Scopes optional secrets to the generate step, not the top-level workflow env | ✓ Good |
-| Summary table row format: backtick-wrap `NAME (optional)` | Allows pytest substring match `"ANTHROPIC_BASE_URL (optional)" in content` to work reliably | ✓ Good |
+| Single-provider design (Gemini only, no fallback) | Simplified architecture; one call/day makes multi-provider overhead unjustified | ✓ Good |
+| Drop multi-provider abstraction (v1.3) | v1.1/v1.2 dual-provider and third-party Claude features removed — Gemini covers the use case at zero cost | ✓ Good |
 
 ---
-*Last updated: 2026-03-24 after Phase 01 (Gemini migration) complete*
+*Last updated: 2026-03-24 after v1.3 milestone (Gemini Migration) complete*

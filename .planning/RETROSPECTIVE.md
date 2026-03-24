@@ -141,6 +141,47 @@
 
 ---
 
+## Milestone: v1.3 — Gemini Migration
+
+**Shipped:** 2026-03-24
+**Phases:** 1 | **Plans:** 2 | **Timeline:** 1 day (2026-03-24)
+
+### What Was Built
+
+- Complete replacement of Anthropic + OpenAI dual-provider system with single `call_gemini()` function using `google-genai` SDK
+- `scripts/ai_provider.py` fully rewritten: removed `call_ai`, `call_claude`, `call_openai`, `resolve_provider`, `_backup_provider`; replaced with 37-line Gemini-only module
+- `plan/config.json` simplified: removed `ai_provider`, `openai_model`, `claude_model`; added `gemini_model`
+- CI workflow reduced: four Anthropic/OpenAI env secrets replaced with single `GEMINI_API_KEY`
+- 114 tests rewritten/updated for Gemini-only; all pass
+
+### What Worked
+
+- Plan 01-01 executor auto-fixed the tests and docs as a deviation (Rule 1 — Bug), eliminating the need for separate plan 01-02 execution — plan 02 became a verification-only pass
+- Highly specific plan specs (exact function signatures, exact file content) enabled zero-ambiguity execution
+- Model update (2.0-flash-lite → 2.5-flash-lite) caught immediately from CI error, fixed in a single targeted commit
+
+### What Was Inefficient
+
+- Plans referenced `gemini-2.0-flash-lite` which was already unavailable — a pre-flight check against the Gemini model availability list would have caught this before execution
+
+### Patterns Established
+
+- Single-provider pattern: one `call_gemini()` function, `GEMINI_MODEL` constant, `ProviderError` exception — simpler than the multi-provider dispatcher from v1.1/v1.2
+- `genai.Client()` instantiated inside function (not module-level) — mirrors prior SDK patterns for clean testability
+
+### Key Lessons
+
+- When migrating to a new SDK, verify model name availability before planning (model availability changes faster than documentation)
+- Tight single-phase milestones (1 phase, 2 plans) complete in hours — scoping migrations as standalone milestones avoids entanglement with feature work
+
+### Cost Observations
+
+- Model mix: 100% sonnet (executor + verifier)
+- Sessions: 1
+- Notable: smallest milestone to date (1 phase, 2 plans); executor deviation pattern eliminated ~50% of planned agent work
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -150,6 +191,7 @@
 | v1.0 | 3 | 7 | First milestone — established TDD + pipe patterns |
 | v1.1 | 3 | 5 | Provider abstraction + fallback; documentation TDD pattern |
 | v1.2 | 2 | 4 | Third-party endpoint config; conditional SDK kwargs pattern |
+| v1.3 | 1 | 2 | Full provider swap (Anthropic+OpenAI → Gemini); removed multi-provider complexity |
 
 ### Cumulative Quality
 
@@ -158,3 +200,4 @@
 | v1.0 | 24 | ~85% scripts | feedparser, anthropic |
 | v1.1 | 115 | ~90% scripts | openai 2.29.0 |
 | v1.2 | 130+ | ~90% scripts | none |
+| v1.3 | 114 | ~90% scripts | google-genai 1.68.0 (replaced anthropic + openai) |

@@ -2,7 +2,7 @@
 
 ## What This Is
 
-An automated system that fetches a real English article from public sources each day, uses an AI provider (Claude — including third-party Claude-compatible APIs — or OpenAI, switchable via config with automatic fallback) to generate B1-B2 companion exercises (vocabulary highlights, chunking expressions, comprehension questions with answers), and commits the combined lesson as a date-named Markdown file to git. Ships daily to `content/YYYY-MM-DD.md` via GitHub Actions.
+An automated system that fetches a real English article from public sources each day, uses Google Gemini (via `google-genai` SDK) to generate B1-B2 companion exercises (vocabulary highlights, chunking expressions, comprehension questions with answers), and commits the combined lesson as a date-named Markdown file to git. Ships daily to `content/YYYY-MM-DD.md` via GitHub Actions.
 
 ## Core Value
 
@@ -53,19 +53,18 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 
 ## Context
 
-**Shipped v1.2** with ~2,300 LOC Python (scripts + tests).
-Tech stack: Python, feedparser 6.0.12, anthropic 0.86.0, openai 2.29.0, GitHub Actions.
-First live lesson committed 2026-03-23. Dual-provider support and third-party Claude API support shipped same day.
+**Shipped v1.2** (now on Gemini). ~2,300 LOC Python (scripts + tests).
+Tech stack: Python, feedparser 6.0.12, google-genai 1.68.0, GitHub Actions.
+First live lesson committed 2026-03-23. Migrated to Gemini-only provider 2026-03-24 (Phase 01 complete).
 
 Primary RSS source: `newsinlevels.com/feed` (only verified URL returning 800+ char bodies via `content:encoded`).
-Provider switching: `AI_PROVIDER` env var > `ai_provider` in `plan/config.json` > default `anthropic`.
-Third-party Claude: `ANTHROPIC_BASE_URL` + `ANTHROPIC_AUTH_TOKEN` env vars > `plan/config.json` fields > Anthropic SDK defaults.
+AI provider: Google Gemini (`gemini-2.0-flash-lite` via `google-genai` SDK). Single provider, no fallback.
 
 ## Constraints
 
-- **Tech stack**: Python; `feedparser`, `anthropic`, `openai` SDK
-- **API costs**: one AI call per day; gpt-4o-mini and claude-haiku are both cost-efficient
-- **No secrets in code**: `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` from GitHub Secrets only
+- **Tech stack**: Python; `feedparser`, `google-genai` SDK
+- **API costs**: one AI call per day; `gemini-2.0-flash-lite` is within free tier for ~1,400 tokens/day
+- **No secrets in code**: `GEMINI_API_KEY` from GitHub Secrets only
 - **File format**: Pure Markdown, no frontmatter, readable in any git viewer
 - **CI**: GitHub Actions (existing infrastructure)
 
@@ -93,4 +92,4 @@ Third-party Claude: `ANTHROPIC_BASE_URL` + `ANTHROPIC_AUTH_TOKEN` env vars > `pl
 | Summary table row format: backtick-wrap `NAME (optional)` | Allows pytest substring match `"ANTHROPIC_BASE_URL (optional)" in content` to work reliably | ✓ Good |
 
 ---
-*Last updated: 2026-03-23 after v1.2 milestone*
+*Last updated: 2026-03-24 after Phase 01 (Gemini migration) complete*

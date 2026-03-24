@@ -24,6 +24,7 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 
 ### Validated
 
+- ✓ Astro 6 static site scaffolded with Content Collections and GitHub Pages CI/CD — Phase 02 (v2.0)
 - ✓ GitHub Actions daily cron scheduling — v1.0
 - ✓ Git commit automation from CI with Beijing-timezone filename — v1.0
 - ✓ Idempotency guard (skip duplicate commits) — v1.0
@@ -52,7 +53,6 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 
 ### Active
 
-- [ ] Astro static site scaffolded with GitHub Pages deployment — v2.0
 - [ ] Build-time content index generated from `content/*.md` — v2.0
 - [ ] Homepage: today's lesson + recent list — v2.0
 - [ ] Lesson page: collapsible vocab/chunks/questions, tap-to-reveal answers — v2.0
@@ -128,4 +128,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 — v2.0 学习网站 milestone started*
+*Last updated: 2026-03-24 — Phase 02 complete: Astro foundation + GitHub Pages CI/CD live*

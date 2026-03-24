@@ -1,4 +1,4 @@
-"""AI exercise generator — Phase 4.
+"""AI exercise generator.
 
 Reads Article Envelope JSON from stdin, calls AI provider once,
 outputs full Markdown lesson to stdout.
@@ -10,11 +10,11 @@ import json
 import sys
 from pathlib import Path
 
-from scripts.ai_provider import call_ai, resolve_provider
+from scripts.ai_provider import call_gemini, ProviderError
 
 
 def build_prompt(envelope: dict) -> str:
-    """Build the Claude prompt from an Article Envelope dict."""
+    """Build the AI prompt from an Article Envelope dict."""
     title = envelope["title"]
     body = envelope["body"]
     return f"""You are an English learning assistant for Chinese speakers studying at B1-B2 level.
@@ -49,16 +49,16 @@ def parse_response(raw_text: str) -> dict:
     try:
         data = json.loads(text)
     except json.JSONDecodeError as e:
-        print(f"ERROR: Claude returned invalid JSON: {e}", file=sys.stderr)
+        print(f"ERROR: AI returned invalid JSON: {e}", file=sys.stderr)
         sys.exit(1)
     required = {"vocabulary", "chunks", "questions"}
     missing = required - set(data.keys())
     if missing:
-        print(f"ERROR: Claude response missing keys: {missing}", file=sys.stderr)
+        print(f"ERROR: AI response missing keys: {missing}", file=sys.stderr)
         sys.exit(1)
     if len(data["vocabulary"]) < 5:
         print(
-            f"ERROR: Claude returned only {len(data['vocabulary'])} vocabulary items (need 5+)",
+            f"ERROR: AI returned only {len(data['vocabulary'])} vocabulary items (need 5+)",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -130,16 +130,12 @@ def main() -> None:
         sys.exit(1)
 
     config = _load_config()
-    provider = resolve_provider(config)
-    model_config = {
-        "openai_model": config.get("openai_model", "gpt-4o-mini"),
-        "claude_model": config.get("claude_model"),
-        "anthropic_base_url": config.get("anthropic_base_url"),
-        "anthropic_auth_token": config.get("anthropic_auth_token"),
-    }
-
     prompt = build_prompt(envelope)
-    raw_response = call_ai(prompt, provider=provider, model_config=model_config)
+    try:
+        raw_response = call_gemini(prompt, model=config.get("gemini_model"))
+    except ProviderError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        sys.exit(1)
     exercises = parse_response(raw_response)
     markdown = render_markdown(envelope, exercises)
     print(markdown)

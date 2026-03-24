@@ -31,10 +31,7 @@ jobs:
 
       - name: Generate and commit daily content
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
-          ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           set -eo pipefail
           TODAY_FILE=$(python -c "from scripts.content_utils import get_beijing_date, content_path; print(content_path(get_beijing_date()))")

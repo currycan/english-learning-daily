@@ -1,30 +1,32 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: v1.3 milestone complete
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-03-24T06:34:41.995Z"
+milestone: v2.0
+milestone_name: 学习网站
+status: Defining requirements
+stopped_at: —
+last_updated: "2026-03-24T00:00:00.000Z"
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-23)
+See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Every day a ready-to-read English lesson lands in git — real content with targeted vocabulary, chunking expressions, and exercises to deepen understanding.
-**Current focus:** Phase 01 — claude-openai-api-key-gemini-api
+**Current focus:** v2.0 学习网站 — defining requirements
 
 ## Current Position
 
-Phase: 01
-Plan: Not started
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-24 — Milestone v2.0 学习网站 started
 
 ## Accumulated Context
 
@@ -37,16 +39,23 @@ Key patterns carry forward:
 - `set -eo pipefail` + three-stage pipe pattern for CI pipelines
 - TDD RED → GREEN per plan, including documentation (write assertions first)
 - Instantiate SDK clients inside functions for testability
-- `ProviderError` at low level + fallback orchestration at `call_ai` level
-- Conditional SDK kwargs dict — only populate when non-empty
 - Bilingual (EN + ZH) docs format across all project docs
-- [Phase 01]: Removed all Anthropic and OpenAI SDK code; single call_gemini() function with GEMINI_MODEL constant (gemini-2.0-flash-lite)
-- [Phase 01]: GEMINI_API_KEY env var takes priority over api_key kwarg; ProviderError exception retained for consistent error handling
-- [Phase 01]: All plan 01-02 work was pre-completed as a deviation during plan 01-01; test suite passes 114/114 with no new work required
+- [Phase 01]: Removed all Anthropic and OpenAI SDK code; single call_gemini() function with GEMINI_MODEL constant (gemini-2.5-flash-lite)
+
+### Website Context
+
+See: .planning/website-CONTEXT.md — full implementation decisions from discuss session.
+
+Key decisions:
+- Astro static site + GitHub Pages default domain
+- Mobile-first, system dark/light auto-switch + manual toggle
+- Collapsible sections (vocab/chunks/questions), answers hidden tap-to-reveal
+- Calendar archive view, localStorage reading progress
+- Build triggered by existing daily-content.yml workflow
 
 ### Roadmap Evolution
 
-- Phase 1 added: 删除 Claude 和 OpenAI 的 API key 相关代码，改成使用 Gemini API
+- v2.0 started: 学习网站 — Astro static site for reading daily lessons
 
 ### Pending Todos
 
@@ -54,10 +63,10 @@ None.
 
 ### Blockers/Concerns
 
-None — all v1.2 requirements satisfied and archived.
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-24T06:09:07.909Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-03-24
+Stopped at: Milestone v2.0 started, requirements in progress
 Resume file: None

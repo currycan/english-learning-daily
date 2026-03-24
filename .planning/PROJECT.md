@@ -1,5 +1,17 @@
 # English Daily Content
 
+## Current Milestone: v2.0 学习网站 (Learning Website)
+
+**Goal:** Build a static Astro website on GitHub Pages that renders daily Markdown lessons as a mobile-first reading experience accessible anywhere.
+
+**Target features:**
+- Astro 静态站 + GitHub Pages 部署，每次内容入库后自动构建
+- 首页：今日课文全屏展示 + 最近课文列表
+- 课文页面：文章常驻可见 + 词汇/表达/问题三块可折叠，答案点击显示
+- 归档页：日历视图，有内容的日期可点击
+- 阅读进度：localStorage 记录已读日期，日历格子标记已读/未读
+- 视觉：跟随系统深色/浅色自动切换 + 手动 toggle，持久化 localStorage
+
 ## What This Is
 
 An automated system that fetches a real English article from public sources each day, uses Google Gemini (via `google-genai` SDK) to generate B1-B2 companion exercises (vocabulary highlights, chunking expressions, comprehension questions with answers), and commits the combined lesson as a date-named Markdown file to git. Ships daily to `content/YYYY-MM-DD.md` via GitHub Actions.
@@ -40,18 +52,24 @@ Every day a ready-to-read English lesson lands in git — real content, not gene
 
 ### Active
 
-(None — define next milestone goals via `/gsd:new-milestone`)
+- [ ] Astro static site scaffolded with GitHub Pages deployment — v2.0
+- [ ] Build-time content index generated from `content/*.md` — v2.0
+- [ ] Homepage: today's lesson + recent list — v2.0
+- [ ] Lesson page: collapsible vocab/chunks/questions, tap-to-reveal answers — v2.0
+- [ ] Archive: calendar view, days with content tappable — v2.0
+- [ ] Reading progress: localStorage tracks read dates, calendar shows read/unread — v2.0
+- [ ] Dark/light mode: system auto-switch + manual toggle — v2.0
 
 ### Out of Scope
 
 | Feature | Reason |
 |---------|--------|
 | Push notifications for content | Separate system; user reads from git directly |
-| Interactive exercises / quiz UI | Static Markdown only; no web app |
+| Interactive exercises / quiz UI | Tap-to-reveal Q&A covers this; no quiz game engine |
 | Multiple articles per day | One focused lesson beats information overload |
 | Audio or video content | Text only |
 | Grammar exercises | Chunking + comprehension sufficient for B1-B2 target |
-| User progress tracking | Out of scope; no state tracking for content consumption |
+| Cross-device sync for reading progress | localStorage only; no backend sync |
 | Web scraping (non-RSS) | RSS-only keeps implementation stable and legal |
 | Multi-provider load balancing | Overkill for one call/day; fallback is sufficient |
 
@@ -92,5 +110,22 @@ AI provider: Google Gemini (`gemini-2.5-flash-lite` via `google-genai` SDK). Sin
 | Single-provider design (Gemini only, no fallback) | Simplified architecture; one call/day makes multi-provider overhead unjustified | ✓ Good |
 | Drop multi-provider abstraction (v1.3) | v1.1/v1.2 dual-provider and third-party Claude features removed — Gemini covers the use case at zero cost | ✓ Good |
 
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd:transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
-*Last updated: 2026-03-24 after v1.3 milestone (Gemini Migration) complete*
+*Last updated: 2026-03-24 — v2.0 学习网站 milestone started*

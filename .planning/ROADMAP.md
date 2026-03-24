@@ -44,7 +44,7 @@ Full archive: `.planning/milestones/v1.2-ROADMAP.md`
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 1. Foundation | v1.0 | 2/2 | Complete | 2026-03-22 |
+| 1. Foundation | v1.0 | 2/2 | Complete   | 2026-03-24 |
 | 2. RSS Fetch | v1.0 | 2/2 | Complete | 2026-03-22 |
 | 3. AI Pipeline | v1.0 | 3/3 | Complete | 2026-03-23 |
 | 4. Provider Abstraction + OpenAI Integration | v1.1 | 2/2 | Complete | 2026-03-23 |
@@ -58,8 +58,8 @@ Full archive: `.planning/milestones/v1.2-ROADMAP.md`
 **Goal:** Replace all Claude/OpenAI code, config, CI, tests, and docs with Gemini-only implementation using google-genai SDK
 **Requirements**: TBD
 **Depends on:** Phase 0
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 01-01-PLAN.md — Replace production code, config, and CI with Gemini-only
-- [ ] 01-02-PLAN.md — Rewrite tests and documentation for Gemini
+- [x] 01-02-PLAN.md — Rewrite tests and documentation for Gemini

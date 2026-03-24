@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const entries = await getCollection('lessons');
+const lessons = entries.sort((a, b) => b.id.localeCompare(a.id));
+---
+<Base title="English Learning Daily">
+  <h1 class="text-xl font-semibold mb-4">Lessons</h1>
+  {lessons.length === 0 ? (
+    <div>
+      <h2 class="text-xl font-semibold">No lessons yet</h2>
+      <p class="mt-2">Lessons appear here once content is committed to the repository.</p>
+    </div>
+  ) : (
+    <ul class="space-y-2">
+      {lessons.map(lesson => (
+        <li>
+          <a href={`/lesson/${lesson.id}`} class="text-[#2563eb] hover:underline">
+            {lesson.id}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</Base>

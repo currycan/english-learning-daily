@@ -1,173 +1,209 @@
 # Project Research Summary
 
-**Project:** English Daily Content — automated article fetch + AI exercise generation
-**Domain:** RSS-to-AI content pipeline with GitHub Actions and git-committed Markdown output
-**Researched:** 2026-03-22
-**Confidence:** MEDIUM
+**Project:** English Learning Daily — v2.0 Website Milestone
+**Domain:** Mobile-first static reading/learning website (Astro + GitHub Pages) layered on existing Python content pipeline
+**Researched:** 2026-03-24
+**Confidence:** HIGH
 
 ## Executive Summary
 
-This project adds an automated daily English learning content pipeline to an existing GitHub Actions-driven study system. The pattern is straightforward: fetch one real article from VOA Learning English RSS, pass it through a single Claude API call to extract vocabulary and comprehension questions, render the result as Markdown, and commit it to `content/YYYY-MM-DD.md`. The existing codebase already establishes the exact architecture to follow — a Unix pipeline of single-concern Python scripts communicating via stdout/stdin JSON envelopes. The new system is a direct extension of that pattern, adding two new stages (RSS fetch, Claude API) and replacing the Bark notification delivery stage with a git commit stage.
+This project adds a static website frontend to an already-functioning Python/GitHub Actions content pipeline. The pipeline generates `content/YYYY-MM-DD.md` files daily; the website consumes them at build time and serves them as a mobile-first reading app on GitHub Pages. The canonical approach — confirmed against official Astro and GitHub documentation — is an Astro 6.x project in a `website/` subdirectory using the Content Collections `glob()` loader with `.passthrough()` schema, deployed via `withastro/action@v3` and `actions/deploy-pages@v4` as a downstream job in the existing `daily-content.yml` workflow. No new secrets, no backend, no client-side framework — the site is 100% static HTML with approximately 30 lines of vanilla JS for dark mode and read-tracking.
 
-The recommended approach is to build four scripts (`fetch_article.py`, `generate_exercises.py`, `render_markdown.py`, `commit_content.py`) plus a shared utilities module, wired together in a new GitHub Actions workflow using `|` pipes. The stack additions are minimal: `feedparser` for robust RSS parsing and the `anthropic` SDK for the Claude API call. Using `claude-haiku-3-5` keeps daily API cost near zero. VOA Special English as the primary source eliminates most B1-B2 level-filtering complexity because that source is already calibrated for non-native learners.
+The feature set is well-scoped and implementation patterns are all well-documented. Every UI requirement maps to either a native HTML feature (`<details>/<summary>` for collapsibles, CSS custom properties for theming) or a small build-time computation (date-fns calendar grid). The key differentiator — visual read/unread progress on the calendar — is achievable with localStorage and a single `<script is:inline>` block. There are no novel engineering challenges here; the risk is almost entirely in configuration and integration details.
 
-The key risks are operational, not architectural: GitHub Actions scheduled workflows are not guaranteed to fire on free-tier repos; RSS feed structure changes without warning; and committing from CI requires explicit write permissions and git identity configuration. All three are well-understood problems with established mitigations. The timezone date mismatch pitfall (UTC runner vs. Beijing local time) is subtle and often missed — it must be addressed explicitly in the date-derivation logic. Build in a tight order (utilities first, then each pipeline stage, workflow last) and the dependency chain is clean throughout.
+The dominant risk category is CI/CD configuration: four issues (missing `base` URL, `workflow_run` branch restriction, concurrent deploy race condition, and content collections hard-failing on frontmatter-free files) will all cause blocking failures if not addressed in the first phase. All four have clear, well-documented solutions and must be resolved before writing any page component.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The existing stack is extended with exactly two new libraries. All other functionality uses the Python stdlib or dependencies already pinned in `requirements.txt`. This is the correct call: the pipeline makes one HTTP call and one AI call per day from CI — there is no async requirement, no multi-template complexity, and no justification for additional dependencies.
+Astro 6.x is the right choice for this project: it is the current stable release, its Content Collections API handles the frontmatter-free existing Markdown files via `z.object({}).passthrough()`, and it deploys to GitHub Pages via the official `withastro/action` without needing a PAT or deploy key. Tailwind CSS 4 integrates via the `@tailwindcss/vite` plugin (the legacy `@astrojs/tailwind` integration is deprecated and must not be used). `date-fns` 4.x runs only at build time for the calendar grid — zero client bytes. The entire client-side JavaScript footprint is approximately 30 lines of vanilla JS split between dark mode and read-tracking.
 
 **Core technologies:**
-- `Python 3.12` (CI): all script logic — already the project runtime; no second language
-- `feedparser 6.0.11`: RSS parsing — handles malformed XML, encoding quirks, and CDATA blocks that `xml.etree` cannot survive
-- `anthropic >=0.25.0,<1.0`: Claude API client — official SDK with built-in auth, retry, and typed responses
-- `claude-haiku-3-5`: AI model — 3x cheaper than Sonnet; sufficient for structured vocabulary/question extraction at ~1,400 tokens/day
-- `requests 2.32.3` (existing): HTTP fetching — already pinned; no async overhead needed for one daily call
-- `pytest 8.3.5` (existing): test framework — already in use; no change
-- `subprocess` + git CLI: CI commits — already the project pattern from `mark_done.py`
-- stdlib only (`pathlib`, `textwrap`, `re`, `json`): file I/O, Markdown formatting, level heuristics — no Jinja2, no readability library
+- Astro 6.x: static site generator and content layer — current stable, native Content Collections, GitHub Pages first-class support
+- Tailwind CSS 4 via `@tailwindcss/vite`: utility CSS — replaces deprecated `@astrojs/tailwind`; dark mode via `@custom-variant dark`
+- `@tailwindcss/typography`: prose styling for article reading — applies correct line-height and font size without manual CSS
+- `date-fns` 4.x: build-time calendar grid generation — tree-shakeable, zero runtime cost
+- TypeScript "base" preset: type checking — bundled with Astro, no separate install required
+- `withastro/action@v3` + `actions/deploy-pages@v4`: GitHub Pages deployment — uses auto-provided `GITHUB_TOKEN`, no PAT required
 
-**Critical version note:** Pin `anthropic` to an exact version at implementation time (verify current release on PyPI; training knowledge gives 0.25+). The SDK has had breaking shape changes across minor versions.
+**Critical version constraints:**
+- Astro 6 requires Node 22+ (GitHub Actions `ubuntu-latest` provides Node 24 — compatible)
+- Tailwind 4 requires Astro 5.2+ or 6.x (not earlier)
+- Content Collections config file location is `src/content.config.ts` (Astro 5+ location, NOT `src/content/config.ts`)
 
 ### Expected Features
 
-The pipeline delivers a daily Markdown file with a fixed structure: article header with source URL, vocabulary section (5-8 words with plain-English definitions and in-article example sentences), comprehension questions (3-5, at least one inferential), and an answer key. This is the complete v1 scope.
+The feature set for v2.0 is fully defined and scoped against locked decisions in PROJECT.md (D-01 through D-26). There are no ambiguous "maybe" features.
 
-**Must have (table stakes):**
-- Real article content fetched from VOA/BBC RSS — authentic input is non-negotiable for language acquisition
-- Correct B1-B2 level calibration — VOA Special English handles this at source; minimal extra filtering needed
-- Vocabulary highlights (5-8 words) with plain-English definitions and in-article example sentences
-- Comprehension questions (3-5) including at least one inferential question, with answers
-- Consistent daily availability — the whole value proposition depends on reliability
-- Idempotent output — running twice on the same day must not overwrite or duplicate
-- Graceful source failure handling — exit non-zero on failure so Actions marks the job failed; fallback to BBC before giving up
-- Readable Markdown with consistent heading structure for grep/search across weeks
+**Must have (table stakes — all P1 for v2.0):**
+- Today's lesson on homepage with recent 5-7 day list — primary use case
+- Article text always visible, never collapsible — core reading UX
+- Collapsible vocabulary, expressions, and comprehension sections via `<details>` — mobile screen management
+- Per-question tap-to-reveal answers (EN + Chinese together in one toggle) — active recall preservation
+- Archive calendar with month navigation and tappable content days
+- Comfortable mobile typography: 16-18px body, 1.5-1.6 line-height, 44px min tap targets
+- Dark/light mode with system auto-follow, manual toggle, localStorage persistence, no flash of wrong theme
+- Graceful empty state showing most recent lesson when today's is not yet generated
 
-**Should have (differentiators):**
-- Source URL in file header — connects learning content to the real article
-- Inferential comprehension questions explicitly required in prompt — most generators default to factual only
-- Article topic tag (single metadata line) — enables future filtering by domain once the archive grows
-- CEFR level label on each vocabulary word (B1/B2) — gives learner a mental model of their progress boundary
+**Should have (differentiators — all P1 for v2.0):**
+- Reading progress via localStorage: auto-mark on lesson page load, no button needed
+- Visual read/unread indicators on calendar cells
+- Build-time content index via Content Collections — no runtime API calls, no loading spinners
 
-**Defer (v2+):**
-- Vocabulary reuse detection (skip already-taught words) — high complexity, zero value before 30 days of data; revisit at Week 8+
-- B1-B2 word classification labels requiring CEFR wordlist — defer until core pipeline is stable; accuracy is approximate anyway
-- Audio/TTS generation — binary assets in git, extra API cost, separate infra concern
-- Interactive exercises — incompatible with static Markdown output model
+**Defer to v2.x:**
+- Previous/next lesson navigation links on lesson pages — convenient but not blocking
+- Section collapse state persisted in localStorage — add only if users report friction
+
+**Defer to v3+:**
+- Client-side full-text search (Pagefind) — valuable only at 50+ lessons
+- Password protection — explicitly deferred in project context
+
+**Anti-features to avoid:**
+- "Expand all / Collapse all" button — clutters mobile; per-section `<details>` covers the need
+- Explicit "Mark as read" button — auto-mark on page load covers 95% of cases
+- Quiz/scoring mode — out of scope; tap-to-reveal is the correct stopping point for B1-B2 reading
+- Cross-device sync — requires backend; accept localStorage-only limitation
 
 ### Architecture Approach
 
-The new pipeline is a direct extension of the existing `generate_task.py | push_bark.py` architecture: discrete single-concern scripts communicate via stdout/stdin JSON envelopes. Each stage is independently testable by piping fixture JSON to it. The GitHub Actions workflow wires stages with `|` pipes and provides secrets as environment variables. No shared mutable state crosses component boundaries; the filesystem (`content/YYYY-MM-DD.md` existence) is the only idempotency mechanism.
+The architecture is a clean two-layer system: the existing Python pipeline produces `content/*.md` files committed to the repository, and the Astro build consumes them at CI time via the `glob()` loader pointing at `../../content/` from the `website/` subdirectory. The `website/` isolation is not cosmetic — it prevents `node_modules/` from conflicting with the Python `venv/` and keeps Node CI steps cleanly scoped to `working-directory: website`. The critical architectural decision is to add `build-and-deploy` as a downstream job in the existing `daily-content.yml` workflow (using `needs: generate-content`) rather than using a separate `workflow_run`-triggered file — this single decision eliminates three distinct pitfalls.
 
 **Major components:**
-1. `scripts/content_utils.py` — shared pure functions (date helpers, level-scoring heuristic, idempotency check); no I/O; required by all other scripts
-2. `scripts/fetch_article.py` — fetch VOA RSS (with BBC fallback), select one item, validate minimum length, emit Article Envelope JSON to stdout
-3. `scripts/generate_exercises.py` — read Article Envelope from stdin, call Claude API once (single structured JSON prompt), emit Content Envelope JSON to stdout
-4. `scripts/render_markdown.py` — read Content Envelope from stdin, apply pure formatting function, emit Markdown string to stdout
-5. `scripts/commit_content.py` — read Markdown string from stdin, check idempotency, write file, git add/commit/push; exit 0 if already committed, exit 1 on any error
-6. `.github/workflows/content.yml` — cron workflow wiring all four stages with `|` pipes; sets `permissions: contents: write`
+1. `src/content.config.ts` — defines `lessons` collection via glob loader at `../../content/`; `.passthrough()` schema for frontmatter-free files
+2. `src/lib/parseLesson.ts` — pure TypeScript function; splits raw `body` on `^## ` to produce 4 typed section strings
+3. `src/pages/index.astro` — homepage; today's lesson full-width + recent list + graceful empty state fallback
+4. `src/pages/lesson/[date].astro` — dynamic static route per date; renders 4 section components with distinct interactivity
+5. `src/pages/archive.astro` — calendar grid; static HTML structure + inline script for localStorage read-state injection
+6. `src/components/` — `VocabCard`, `ChunkCard`, `QAItem` (one per content type), `CalendarGrid`; all receive pre-parsed strings
+7. `src/layouts/Base.astro` — HTML shell with `is:inline` theme detection script in `<head>` before first paint
+8. `.github/workflows/daily-content.yml` (modified) — adds `build-and-deploy` job with `needs: generate-content` and `concurrency` group
 
-**Data flow:** Article Envelope (JSON) → Content Envelope (JSON) → Markdown string → committed file
+**State boundaries:** All lesson content is build-time static HTML. Only two concerns are client-side: theme preference (`localStorage.themeOverride`) read in `<head>` before first paint, and read progress (`localStorage.readLessons` array) written on lesson page load and read on archive page load.
 
 ### Critical Pitfalls
 
-1. **GitHub Actions scheduled workflows are not guaranteed to run** — keep `workflow_dispatch` always enabled for manual recovery; add an `if: failure()` Bark notification step so silent skips surface as alerts; keep the repo active to avoid deprioritization
-2. **RSS feed structure changes without warning** — use `feedparser` (not `xml.etree`); validate extracted body length >= 200 chars before calling Claude; log raw feed item on first use
-3. **Committing from CI requires explicit write permissions and git identity** — add `permissions: contents: write` to the workflow job; set `git config user.name` and `user.email` before committing; push with `git push origin HEAD:master` explicitly
-4. **Claude API produces inconsistent output structure without strict format constraints** — require JSON output in the prompt with explicit schema; parse with `json.loads()` in Python and validate structure; pin a specific model version (e.g. `claude-3-5-haiku-20241022`) not a floating alias
-5. **UTC runner date vs. Beijing local date mismatch** — derive target date with explicit timezone: `TZ='Asia/Shanghai' date +%Y-%m-%d` in the workflow or `datetime.now(ZoneInfo("Asia/Shanghai")).date()` in Python; document the convention as a constant; never rely on implicit system clock
+1. **Missing `base: '/study-all'` in `astro.config.mjs`** — every asset 404s on GitHub Pages; local dev works fine masking the bug. Set `base` and `site` on day one and use `import.meta.env.BASE_URL` for all internal links. Severity: BLOCKING.
+2. **Content collections hard-fail on frontmatter-free files** — existing `.md` files have no YAML frontmatter; any required schema field causes `InvalidContentEntryFrontmatterError` on every file. Use `z.object({}).passthrough()` in the collection schema. Severity: BLOCKING.
+3. **`workflow_run` trigger only fires on the default branch** — a separate deploy workflow file on a feature branch never fires; impossible to test without merging. Use `needs: generate-content` in the same workflow file. Severity: BLOCKING if using `workflow_run`.
+4. **Concurrent deploy race condition** — two overlapping workflow runs produce a non-fast-forward git failure. Add `concurrency: group: github-pages-deploy` to the deploy job. Severity: BLOCKING (intermittent).
+5. **Dark mode flash of wrong theme (FOUC)** — Astro bundles scripts externally by default; the theme class reaches `<html>` after first paint. Mark the theme detection script `is:inline` in `<head>`. Severity: Annoying on every page load for dark-mode users.
 
 ## Implications for Roadmap
 
-Based on research, the dependency chain is clear and the build order is dictated by it. Three phases cover the complete scope.
+Based on research, the dependency graph and pitfall-to-phase mapping point to a clear 4-phase structure.
 
-### Phase 1: Foundation and Infrastructure
+### Phase 1: Foundation — Astro Scaffold, CI/CD, Content Loading
 
-**Rationale:** Pipeline stages cannot be tested or integrated until shared utilities exist and the CI environment is verified to support git commits. Timezone, permissions, and idempotency logic must be established before any content logic is written — these are the failure modes that cause silent data loss.
-**Delivers:** `content_utils.py` with shared helpers; `content/` directory initialized with `.gitkeep`; CI workflow skeleton with correct `permissions: contents: write`, git identity, and timezone-aware date derivation; `commit_content.py` with idempotency check; verified git commit/push from Actions
-**Addresses:** Idempotent output, consistent daily availability (table stakes)
-**Avoids:** Pitfalls 3 (CI write permissions), 5 (timezone date mismatch), 11 (missing `content/` directory)
-**Research flag:** Standard patterns — well-documented GitHub Actions configuration; no phase research needed
+**Rationale:** All 4 blocking pitfalls are infrastructure-layer issues that must be resolved before any content can be rendered. A broken foundation that deploys incorrectly wastes all subsequent implementation work. The `base` URL, workflow architecture, content collections schema, and concurrency configuration are pre-requisites for every subsequent phase.
 
-### Phase 2: RSS Fetch and Article Pipeline
+**Delivers:** A deployable (but content-free) Astro site at `https://username.github.io/study-all/` wired into the existing content pipeline; CI builds and deploys on every push to `content/**`.
 
-**Rationale:** The fetch stage is the entry point of the pipeline. It must be stable and validated with real feed data before the AI stage is built on top of it. Feed fragility (Pitfall 2) and User-Agent blocking (Pitfall 6) must be hardened here, not discovered during AI integration.
-**Delivers:** `fetch_article.py` with VOA primary source, BBC fallback, minimum length validation, User-Agent header, and plain-text body extraction; fixture JSON for testing downstream stages; integration with `commit_content.py` end-to-end without AI
-**Uses:** `feedparser 6.0.11`, `requests 2.32.3` (existing)
-**Implements:** Article Envelope schema; graceful source failure handling
-**Addresses:** Real article content, graceful source failure handling, readable Markdown output (table stakes)
-**Avoids:** Pitfalls 2 (RSS structure change), 6 (User-Agent blocking), 8 (duplicate-skip logic — check before fetch)
-**Research flag:** Needs validation — verify live VOA and BBC RSS feed URLs and field names before coding the parser; `feedparser` field names differ from `xml.etree` and change across feed versions
+**Key tasks:** Scaffold Astro 6 in `website/`; configure `astro.config.mjs` with `site`, `base: 'study-all'`, `trailingSlash: 'always'`; write `src/content.config.ts` with `.passthrough()` schema; add `build-and-deploy` job with `needs: generate-content` and `concurrency` group; add `public/.nojekyll`; verify deploy reaches Pages and all routes resolve.
 
-### Phase 3: AI Exercise Generation and Markdown Rendering
+**Avoids:** Missing `base` URL (Pitfall 1), content collections frontmatter failure (Pitfall 2/4), `workflow_run` restriction (Pitfall 3), concurrent deploy race condition (Pitfall 4).
 
-**Rationale:** The AI stage depends on a stable Article Envelope from Phase 2. Building it last means the prompt can be tested against real article content rather than synthetic fixtures. Markdown rendering is a pure function with no external dependencies — easiest to complete once the data model is locked.
-**Delivers:** `generate_exercises.py` with single Claude API call, structured JSON prompt, response validation; `render_markdown.py` as pure formatting function; complete end-to-end pipeline from RSS to committed Markdown file; failure notification step in workflow
-**Uses:** `anthropic >=0.25.0,<1.0`, `claude-3-5-haiku-20241022` (pinned model)
-**Implements:** Content Envelope schema; vocabulary highlights (5-8 words), comprehension questions (3-5, at least one inferential), answer key, source URL header
-**Addresses:** All remaining table stakes features; inferential questions and source attribution differentiators
-**Avoids:** Pitfalls 4 (inconsistent Claude output structure), 7 (retry cost overrun — try-once policy), 9 (unpinned anthropic SDK), 10 (non-ASCII encoding)
-**Research flag:** Needs validation — verify current `anthropic` SDK version on PyPI; verify `claude-3-5-haiku-20241022` model ID against Anthropic docs; test JSON output mode prompt pattern against actual SDK response shape before writing parser
+**Research flag:** Standard patterns — skip `research-phase`. All configuration values are documented in official Astro and GitHub Actions docs.
+
+### Phase 2: Lesson Pages and Core Reading UX
+
+**Rationale:** Lesson pages are the dependency root for every other feature — the calendar links to them, the read tracker writes on them, and the homepage references them. They must exist before the archive or homepage can be meaningfully built or tested. The `Base.astro` layout is also created here, and the FOUC-prevention inline script must be correct from the start.
+
+**Delivers:** Fully functional lesson pages at `/lesson/YYYY-MM-DD/` with article always visible, collapsible vocab/expressions/comprehension via `<details>`, per-question tap-to-reveal answers (EN + Chinese together), mobile typography, dark/light mode with no FOUC, and localStorage read tracking.
+
+**Key tasks:** Write `parseLesson.ts` with emoji-aware section splitter (unit-tested against actual `content/2026-03-24.md`, not a synthetic fixture); write `VocabCard`, `ChunkCard`, `QAItem` components; write `Base.astro` with `is:inline` theme detection script; implement dark mode toggle with CSS custom properties; implement localStorage read tracking with `safeGet`/`safeSet` try/catch wrapper.
+
+**Avoids:** FOUC (Pitfall 5 — `is:inline` in `Base.astro`); emoji header parsing bugs (Pitfall 6 — test with real content); localStorage Safari crash (Pitfall 7 — try/catch wrapper from day one).
+
+**Research flag:** Standard patterns — `<details>` collapsibles, FOUC prevention, and localStorage are all well-documented. Skip `research-phase`.
+
+### Phase 3: Homepage with Today's Lesson and Empty State
+
+**Rationale:** Homepage depends on lesson pages existing (it links to them) and on the content index being queryable. The empty state logic — showing most recent lesson when today's is missing — must handle zero-file, one-file, and stale-file edge cases explicitly since these states occur routinely at project inception and after pipeline skips.
+
+**Delivers:** Homepage showing today's lesson full-width (or most recent with "今日课文将在中午更新" label if today's is not yet generated), recent 5-7 day list, and graceful empty state for zero-content edge case.
+
+**Key tasks:** Write `index.astro`; implement 3-state fallback logic (today → most recent → placeholder); derive date from filename `id`, never from client `new Date()`; test with zero, one, and past-date-only content files.
+
+**Avoids:** Single-file homepage build failure (Pitfall 10 — explicit fallback chain); timezone date errors (derive date from filename, not from `new Date()`).
+
+**Research flag:** Standard patterns — skip `research-phase`.
+
+### Phase 4: Archive Calendar with Read/Unread Indicators
+
+**Rationale:** Calendar is the most complex client-side component and depends on lesson pages existing (cells link to them) and localStorage read tracking being in place (Phase 2). Month navigation introduces the only stateful vanilla-JS interaction in the project; the stale event listener pitfall is easy to introduce and silent until tested.
+
+**Delivers:** Calendar archive at `/archive/` with month grid, tappable content days, greyed empty days, month navigation arrows, and read/unread visual state loaded from localStorage.
+
+**Key tasks:** Write `CalendarGrid.astro`; implement build-time month grid via `date-fns` (`eachDayOfInterval`, `startOfMonth`, `endOfMonth`, `getDay`); implement month navigation with event delegation on container (not per-cell); add `is:inline` script for localStorage read-state injection; test 5+ month navigations for listener accumulation.
+
+**Avoids:** Calendar stale event listeners (Pitfall 8 — event delegation, pure `renderCalendar()` function replacing `innerHTML` safely); localStorage Safari crash (same `safeGet` wrapper from Phase 2).
+
+**Research flag:** Standard patterns. Flag the event delegation implementation for code review — the stale listener bug is easy to introduce and only surfaces after several month navigations.
 
 ### Phase Ordering Rationale
 
-- Phase 1 first because timezone, permissions, and idempotency bugs cause silent data loss — these must be known-good before content logic is layered on
-- Phase 2 before Phase 3 because the Article Envelope JSON schema is the contract between the two stages; defining it through real feed data produces a more accurate schema than a synthetic one
-- Phase 3 last because it has the most external dependencies (Anthropic SDK, live model behavior) and benefits from all earlier work being stable
-- Each phase produces a verifiable artifact that can be committed and tested independently
+- Phase 1 first because all 4 blocking pitfalls are infrastructure-layer issues; any page built on a broken foundation must be retested after fixes.
+- Phase 2 before Phase 3 because the homepage links to lesson pages — those routes must exist for link testing to be meaningful.
+- Phase 2 before Phase 4 because the calendar's read state depends on localStorage writes that happen on lesson pages.
+- Phase 3 before Phase 4 because the homepage and calendar share the same sorted collection query — validating it in Phase 3 reduces risk in Phase 4.
 
 ### Research Flags
 
-Needs deeper research during planning:
-- **Phase 2:** Verify live VOA and BBC RSS feed URLs, field names, and CDATA patterns — feed structure is the most fragile external dependency
-- **Phase 3:** Verify current `anthropic` Python SDK version; verify `claude-3-5-haiku-20241022` model ID; test JSON structured output prompt format against actual SDK behavior
+Phases likely needing deeper research during planning:
+- None. All four phases use well-documented, official patterns with multiple high-confidence sources. No third-party integrations with sparse documentation, no novel APIs.
 
-Standard patterns (skip research-phase):
-- **Phase 1:** GitHub Actions `permissions: contents: write`, git identity in CI, and timezone handling are well-documented patterns with no ambiguity
-- **Phase 1:** `content_utils.py` pure functions follow the same shape as existing `plan_state.py` — no research needed
+Phases with standard patterns (skip `research-phase`):
+- **All phases:** Astro Content Collections, GitHub Pages deployment, Tailwind 4, `<details>/<summary>`, localStorage, and `date-fns` calendar all have official documentation and recent community examples confirming correct usage.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | MEDIUM | Core choices (Python, requests, pytest) are HIGH — already pinned in project. `feedparser` version and `anthropic` SDK version need PyPI verification at implementation time. Claude model ID needs Anthropic docs verification. |
-| Features | MEDIUM | Table stakes are grounded in established SLA research (CEFR, Nation, Krashen). Prioritization reflects project constraints and is inherently subjective. Vocabulary reuse detection complexity assessment is HIGH confidence. |
-| Architecture | HIGH | Existing codebase establishes the exact pattern. New pipeline is a direct extension. Component boundaries, envelope schemas, and build order are all determined by existing code, not inference. |
-| Pitfalls | MEDIUM | Structural pitfalls (CI permissions, timezone, idempotency, feed fragility) are HIGH confidence. SDK version specifics (Pitfall 9 exact version number) are MEDIUM — verify at implementation time. |
+| Stack | HIGH | All core choices verified against official Astro 6, Tailwind 4, and GitHub Actions docs. One MEDIUM item: Astro 6 stable release confirmed via a third-party blog post, not official Astro release notes — but version trajectory is confirmed in Astro's own year-in-review. |
+| Features | HIGH | All features map directly to locked decisions in PROJECT.md (D-01 through D-26). UX patterns verified via MDN, WCAG 2.5.5, and multiple community sources. |
+| Architecture | HIGH | All architectural decisions verified against official Astro docs and GitHub Actions docs. Anti-patterns backed by concrete GitHub issues as evidence. |
+| Pitfalls | HIGH | All 4 blocking pitfalls have official documentation as source. Moderate pitfalls backed by MDN, browser vendor docs, and community bug reports with reproducible examples. |
 
-**Overall confidence:** MEDIUM-HIGH
+**Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **`feedparser` vs `xml.etree` for RSS:** STACK.md recommends `feedparser`; ARCHITECTURE.md Component Detail for `fetch_article.py` mentions `xml.etree.ElementTree` as an alternative (without `feedparser`). PITFALLS.md strongly recommends `feedparser`. Resolve: use `feedparser`. The ARCHITECTURE.md mention of `xml.etree` should be treated as a draft note, not a recommendation.
-- **Anthropic SDK exact version:** Cannot be verified without web access. Flag for developer to check `pip index versions anthropic` before pinning in requirements.txt.
-- **Claude model ID:** `claude-3-5-haiku-20241022` is the training-data name. Verify against Anthropic model docs at implementation time — model IDs have changed in past releases.
-- **VOA RSS feed URL stability:** VOA has reorganized feed URLs in the past. Verify the current URL structure before coding the fetcher. Store in `plan/config.json`, not hardcoded.
-- **CEFR word classification accuracy:** Marking vocabulary as B1/B2 with Claude is approximate (no wordlist lookup). Acceptable for a personal tool; document the limitation in the prompt so the learner has correct expectations.
+- **Emoji section header parsing correctness:** The `parseLesson.ts` unit tests must use `content/2026-03-24.md` as the literal input, not a synthetic test fixture with ASCII-only headers. This is a validation gap, not a knowledge gap — the implementation approach is clear, but correctness must be confirmed against real content before lesson pages go live.
+- **`trailingSlash` behavior on GitHub Pages:** The recommendation is `trailingSlash: 'always'` + `build.format: 'directory'`, but redirect behavior for slash-less URLs should be verified on the actual deployed site in Phase 1, not assumed from documentation alone.
+- **Astro 6 `src/content.config.ts` file location:** Astro 5+ moved the config file location. Confirm the exact path during scaffold — a misplaced config silently produces an empty collection with no build error.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- Existing codebase analysis: `scripts/plan_state.py`, `scripts/push_bark.py`, `scripts/mark_done.py` — architecture pattern
-- Existing workflow: `.github/workflows/morning.yml` — CI pattern, Python version, action versions
-- Existing `requirements.txt`: `requests==2.32.3`, `pytest==8.3.5`, `pytest-cov==7.0.0` — stack baseline
-- `.planning/PROJECT.md` — constraints: one call/day, minimal cost, no new runtime beyond requests + anthropic
-- `.planning/codebase/ARCHITECTURE.md` — existing component inventory
+- [Astro GitHub Pages Deploy Guide](https://docs.astro.build/en/guides/deploy/github/) — base, site, withastro/action, permissions, trailingSlash
+- [Astro Content Collections Docs](https://docs.astro.build/en/guides/content-collections/) — glob loader, getCollection, .passthrough() schema
+- [Astro Configuration Reference](https://docs.astro.build/en/reference/configuration-reference/) — site, base, trailingSlash, build.format options
+- [withastro/action GitHub repo](https://github.com/withastro/action) — v3 current, required permissions
+- [Tailwind CSS Astro Install Guide](https://tailwindcss.com/docs/installation/framework-guides/astro) — @tailwindcss/vite plugin setup
+- [Astro 5.2 Release Blog](https://astro.build/blog/astro-520/) — Tailwind 4 support confirmed
+- [Astro 2025 Year in Review](https://astro.build/blog/year-in-review-2025/) — v6 version trajectory
+- [GitHub Actions Events Docs](https://docs.github.com/actions/using-workflows/events-that-trigger-workflows) — workflow_run default-branch restriction
+- [Astro dark mode docs tutorial](https://docs.astro.build/en/tutorial/6-islands/2/) — is:inline canonical approach
+- [MDN: Window localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
+- [MDN: details/summary element](https://developer.mozilla.org/en-US/blog/html-details-exclusive-accordions/)
+- [WCAG 2.5.5 — target size](https://digital.gov/guides/mobile-principles/tap-targets) — 44px tap target requirement
 
 ### Secondary (MEDIUM confidence)
-- CEFR framework (Council of Europe) — feature level calibration rationale
-- Nation (2001) "Learning Vocabulary in Another Language" — vocabulary highlight feature rationale
-- Krashen comprehensible input hypothesis — authentic article requirement rationale
-- Training knowledge (August 2025 cutoff): `feedparser` 6.x stable, Anthropic SDK 0.25+, GitHub Actions scheduler behavior, git-from-CI patterns
+- [Southwell Media: Astro 6 Stable Release (2026)](https://www.southwellmedia.com/blog/astro-6-stable-release) — Node 22 requirement, breaking changes list
+- [myles.garden: Building a Calendar Interface in Astro (September 2025)](https://myles.garden/2025/09/21/astro-calendar) — date-fns build-time calendar pattern
+- [axellarsson.com: Astro FOUC prevention](https://axellarsson.com/blog/astrojs-prevent-dark-mode-flicker/) — is:inline confirmed as canonical fix
+- [lossless.group: Astro Collections with messy frontmatter](https://www.lossless.group/learn-with/issue-resolution/getting-astro-collections-to-work-on-messy-frontmatter) — .passthrough() pattern
+- [mattburke.dev: Safari Private Browsing localStorage](https://mattburke.dev/dom-exception-22-quota-exceeded-on-safari-private-browsing-with-localstorage/) — QuotaExceededError confirmed
+- [GitHub Community: workflow_run default branch restriction](https://github.com/orgs/community/discussions/72097)
+- [GitHub issue tket#63: race condition on gh-pages](https://github.com/CQCL/tket/issues/63) — concurrent deploy failure example
+- [oneuptime.com: GitHub Actions concurrency control (2026-01-25)](https://oneuptime.com/blog/post/2026-01-25-github-actions-concurrency-control/view) — concurrency group patterns
 
-### Tertiary (LOW confidence — verify at implementation)
-- `feedparser==6.0.11` exact version — needs PyPI verification
-- `anthropic>=0.25.0,<1.0` version range — needs PyPI verification for current release
-- `claude-3-5-haiku-20241022` model ID — needs Anthropic docs verification
-- VOA Learning English RSS URL — needs live verification before coding
+### Project context
+- `.planning/website-CONTEXT.md` — decisions D-01 through D-26 (locked)
+- `.planning/PROJECT.md` — v2.0 Active requirements, Out of Scope constraints
+- `content/2026-03-24.md` — actual Markdown format driving parser and display decisions
 
 ---
-*Research completed: 2026-03-22*
+*Research completed: 2026-03-24*
 *Ready for roadmap: yes*

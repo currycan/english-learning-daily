@@ -56,8 +56,28 @@
 
 ## Traceability
 
-*Filled by roadmapper.*
-
 | REQ-ID | Phase | Notes |
 |--------|-------|-------|
-| — | — | — |
+| SITE-01 | Phase 02 | Astro Foundation |
+| SITE-02 | Phase 02 | Astro Foundation |
+| SITE-03 | Phase 02 | Astro Foundation |
+| SITE-04 | Phase 02 | Astro Foundation |
+| LESS-01 | Phase 03 | Lesson Reading Experience |
+| LESS-02 | Phase 03 | Lesson Reading Experience |
+| LESS-03 | Phase 03 | Lesson Reading Experience |
+| LESS-04 | Phase 03 | Lesson Reading Experience |
+| LESS-05 | Phase 03 | Lesson Reading Experience |
+| LESS-06 | Phase 03 | Lesson Reading Experience |
+| LESS-07 | Phase 03 | Lesson Reading Experience |
+| LESS-08 | Phase 03 | Lesson Reading Experience |
+| LESS-09 | Phase 03 | Lesson Reading Experience |
+| ARCH-01 | Phase 04 | Archive Calendar |
+| ARCH-02 | Phase 04 | Archive Calendar |
+| ARCH-03 | Phase 04 | Archive Calendar |
+| ARCH-04 | Phase 04 | Archive Calendar |
+| PROG-01 | Phase 04 | Archive Calendar — localStorage write on lesson load, read on calendar |
+| PROG-02 | Phase 04 | Archive Calendar — visual read/unread indicator on calendar cells |
+| PROG-03 | Phase 05 | Theme & Polish |
+| PROG-04 | Phase 05 | Theme & Polish |
+| PROG-05 | Phase 05 | Theme & Polish |
+| PROG-06 | Phase 05 | Theme & Polish |

@@ -179,7 +179,7 @@ def test_load_config_returns_dict():
     import scripts.generate_exercises as _ge
     config_data = {
         "morning_hour": 7,
-        "gemini_model": "gemini-2.0-flash-lite",
+        "gemini_model": "gemini-2.5-flash-lite",
     }
     mock_path = MagicMock()
     mock_path.read_text.return_value = json.dumps(config_data)
@@ -188,7 +188,7 @@ def test_load_config_returns_dict():
         MockPath.return_value.parent.parent.__truediv__.return_value.__truediv__.return_value = mock_path
         result = _ge._load_config()
     assert isinstance(result, dict)
-    assert result["gemini_model"] == "gemini-2.0-flash-lite"
+    assert result["gemini_model"] == "gemini-2.5-flash-lite"
 
 
 def test_load_config_exits_on_missing_file():
@@ -213,11 +213,11 @@ def test_main_calls_call_gemini(capsys):
     valid_envelope_json = json.dumps(VALID_ENVELOPE)
     with patch("scripts.generate_exercises._load_config") as mock_load_cfg, \
          patch("scripts.generate_exercises.call_gemini") as mock_call_gemini:
-        mock_load_cfg.return_value = {"gemini_model": "gemini-2.0-flash-lite"}
+        mock_load_cfg.return_value = {"gemini_model": "gemini-2.5-flash-lite"}
         mock_call_gemini.return_value = json.dumps(VALID_EXERCISES)
         with patch("sys.stdin") as mock_stdin:
             mock_stdin.read.return_value = valid_envelope_json
             ge.main()
     mock_call_gemini.assert_called_once()
     call_kwargs = mock_call_gemini.call_args
-    assert call_kwargs.kwargs.get("model") == "gemini-2.0-flash-lite"
+    assert call_kwargs.kwargs.get("model") == "gemini-2.5-flash-lite"

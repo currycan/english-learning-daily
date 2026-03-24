@@ -11,7 +11,7 @@ import scripts.ai_provider as ap
 
 def test_gemini_model_constant_exists():
     assert hasattr(ap, "GEMINI_MODEL")
-    assert ap.GEMINI_MODEL == "gemini-2.0-flash-lite"
+    assert ap.GEMINI_MODEL == "gemini-2.5-flash-lite"
 
 
 def test_provider_error_is_exception():

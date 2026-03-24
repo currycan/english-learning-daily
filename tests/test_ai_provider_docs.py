@@ -60,8 +60,8 @@ def test_gemini_model_field_documented(docs_content: str):
 
 
 def test_default_model_documented(docs_content: str):
-    assert "gemini-2.0-flash-lite" in docs_content, (
-        "docs/ai-providers.md must contain 'gemini-2.0-flash-lite'"
+    assert "gemini-2.5-flash-lite" in docs_content, (
+        "docs/ai-providers.md must contain 'gemini-2.5-flash-lite'"
     )
 
 

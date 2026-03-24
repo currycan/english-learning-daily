@@ -8,7 +8,7 @@ import sys
 
 from google import genai
 
-GEMINI_MODEL = "gemini-2.0-flash-lite"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 
 
 class ProviderError(Exception):

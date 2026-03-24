@@ -1,26 +1,273 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import { parseSections, extractSourceUrl, extractPreview, parseComprehension, getTodayShanghai } from '../lib/lesson-parser';
 
 const entries = await getCollection('lessons');
 const lessons = entries.sort((a, b) => b.id.localeCompare(a.id));
+
+const todayId = getTodayShanghai();
+const hasTodayLesson = lessons.some(l => l.id === todayId);
+const featuredLesson = hasTodayLesson
+  ? lessons.find(l => l.id === todayId)!
+  : lessons[0];
+const showNoticeBar = !hasTodayLesson && lessons.length > 0;
+
+const recentLessons = lessons
+  .filter(l => l.id !== featuredLesson?.id)
+  .slice(0, 5);
+
+// Parse featured lesson sections
+const sections = featuredLesson ? parseSections(featuredLesson.body ?? '') : null;
+const sourceUrl = sections ? extractSourceUrl(sections.article) : null;
+
+// Build recent lesson previews
+const recentPreviews = recentLessons.map(l => {
+  const s = parseSections(l.body ?? '');
+  return { id: l.id, preview: extractPreview(s.article, 60) };
+});
+
+// Parse vocabulary entries from sections.vocabulary
+function parseVocabEntries(vocabularyText: string) {
+  const entries = [];
+  if (!vocabularyText.trim()) return entries;
+
+  // Split by lines that start with ** (vocabulary entries)
+  const lines = vocabularyText.split('\n');
+  let currentEntry = null;
+
+  for (const line of lines) {
+    if (line.startsWith('**') && line.includes('**') && line.includes('(') && line.includes(')')) {
+      // Parse: **word** (pos) （chinese）— definition
+      const match = line.match(/\*\*(.*?)\*\*\s*\((.*?)\)\s*（(.*?)）\s*—\s*(.*)/);
+      if (match) {
+        currentEntry = {
+          word: match[1],
+          pos: match[2],
+          chinese: match[3],
+          definition: match[4],
+          quote: ''
+        };
+        entries.push(currentEntry);
+      }
+    } else if (line.startsWith('>') && currentEntry) {
+      // Extract quote text
+      currentEntry.quote = line.replace(/^>\s*"?/, '').replace(/"?\s*$/, '');
+    }
+  }
+
+  return entries;
+}
+
+// Parse expression entries from sections.expressions
+function parseExpressionEntries(expressionsText: string) {
+  const entries = [];
+  if (!expressionsText.trim()) return entries;
+
+  // Split into blocks by lines that start with **
+  const blocks = expressionsText.split(/(?=\*\*[^*]+\*\*\s*（)/);
+
+  for (const block of blocks) {
+    if (!block.trim()) continue;
+
+    const lines = block.trim().split('\n');
+    const headerMatch = lines[0]?.match(/\*\*(.*?)\*\*\s*（(.*?)）/);
+
+    if (headerMatch) {
+      const phrase = headerMatch[1];
+      const chinese = headerMatch[2];
+      const explanation = [];
+      const examples = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.startsWith('-')) {
+          examples.push(line.substring(1).trim());
+        } else if (line && !line.startsWith('**')) {
+          explanation.push(line);
+        }
+      }
+
+      entries.push({
+        phrase,
+        chinese,
+        explanation: explanation.join(' '),
+        examples
+      });
+    }
+  }
+
+  return entries;
+}
+
+const vocabEntries = sections ? parseVocabEntries(sections.vocabulary) : [];
+const expressionEntries = sections ? parseExpressionEntries(sections.expressions) : [];
+const qaBlocks = sections ? parseComprehension(sections.comprehension) : [];
+
+// Process article text for display (remove metadata lines)
+function processArticleText(articleText: string): string {
+  if (!articleText) return '';
+
+  return articleText
+    .split('\n\n')
+    .filter(para => para.trim())
+    .filter(para => !para.match(/^\d{2}-\d{2}-\d{4}/)) // Skip timestamp
+    .filter(para => !para.startsWith('> Source:')) // Skip source line
+    .filter(para => !para.startsWith('Difficult words:')) // Skip metadata
+    .filter(para => !para.startsWith('You can watch')) // Skip metadata
+    .filter(para => !para.startsWith('The post')) // Skip metadata
+    .map(para => para.trim())
+    .filter(para => para.length > 0);
+}
+
+const articleParagraphs = sections ? processArticleText(sections.article) : [];
 ---
+
 <Base title="English Learning Daily">
-  <h1 class="text-xl font-semibold mb-4">Lessons</h1>
   {lessons.length === 0 ? (
     <div>
       <h2 class="text-xl font-semibold">No lessons yet</h2>
       <p class="mt-2">Lessons appear here once content is committed to the repository.</p>
     </div>
   ) : (
-    <ul class="space-y-2">
-      {lessons.map(lesson => (
-        <li>
-          <a href={`/lesson/${lesson.id}`} class="text-[#2563eb] hover:underline">
-            {lesson.id}
-          </a>
-        </li>
-      ))}
-    </ul>
+    <div>
+      {showNoticeBar && (
+        <div class="bg-yellow-200 text-yellow-900 px-4 py-3 rounded text-sm mb-4">
+          ⚠️ 今日课文将在中午更新
+        </div>
+      )}
+
+      {featuredLesson && (
+        <div>
+          <h1 class="text-[28px] font-semibold leading-tight mb-6">{featuredLesson.id}</h1>
+
+          <!-- Article Text -->
+          <div class="mb-8">
+            {articleParagraphs.map(paragraph => (
+              <p class="mb-4">{paragraph}</p>
+            ))}
+          </div>
+
+          <!-- Source Link -->
+          {sourceUrl && (
+            <a href={sourceUrl} target="_blank" rel="noopener noreferrer"
+               class="text-blue-600 text-sm underline inline-block mb-8">
+              阅读原文 →
+            </a>
+          )}
+
+          <!-- Vocabulary Section -->
+          <div class="section-block mb-4" data-collapsed="true">
+            <button class="section-header w-full text-left py-3 flex items-center justify-between min-h-[44px] text-xl font-semibold">
+              <span>📚 词汇 / Vocabulary</span>
+              <span class="chevron transition-transform duration-200">▼</span>
+            </button>
+            <div class="section-body grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 0fr">
+              <div class="overflow-hidden">
+                <div class="pt-4">
+                  {vocabEntries.map(entry => (
+                    <div class="border-l-4 border-blue-300 pl-3 py-2 mb-3 bg-gray-50 rounded-r">
+                      <div class="font-semibold">
+                        {entry.word} <span class="font-normal text-sm text-gray-500">({entry.pos})</span> <span class="text-sm">（{entry.chinese}）</span>
+                      </div>
+                      <div class="text-sm mt-1">{entry.definition}</div>
+                      {entry.quote && (
+                        <div class="text-xs text-gray-500 mt-1 italic">"{entry.quote}"</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expressions Section -->
+          <div class="section-block mb-4" data-collapsed="true">
+            <button class="section-header w-full text-left py-3 flex items-center justify-between min-h-[44px] text-xl font-semibold">
+              <span>🔗 表达 / Chunking Expressions</span>
+              <span class="chevron transition-transform duration-200">▼</span>
+            </button>
+            <div class="section-body grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 0fr">
+              <div class="overflow-hidden">
+                <div class="pt-4">
+                  {expressionEntries.map(entry => (
+                    <div class="py-2 mb-3 bg-gray-50 rounded px-3">
+                      <div class="font-semibold">
+                        {entry.phrase} <span class="text-sm">（{entry.chinese}）</span>
+                      </div>
+                      <div class="text-sm mt-1">{entry.explanation}</div>
+                      {entry.examples.map(example => (
+                        <div class="text-sm text-gray-600 mt-1">- {example}</div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comprehension Section -->
+          <div class="section-block mb-4" data-collapsed="true">
+            <button class="section-header w-full text-left py-3 flex items-center justify-between min-h-[44px] text-xl font-semibold">
+              <span>❓ 理解 / Comprehension</span>
+              <span class="chevron transition-transform duration-200">▼</span>
+            </button>
+            <div class="section-body grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 0fr">
+              <div class="overflow-hidden">
+                <div class="pt-4">
+                  {qaBlocks.map(qa => (
+                    <div class="qa-block mb-4">
+                      <p class="font-semibold mb-2">{qa.question}</p>
+                      <div class="answer hidden">
+                        <p class="text-sm mt-1">{qa.answerEn}</p>
+                        <p class="text-sm text-gray-500 mt-1">{qa.answerZh}</p>
+                      </div>
+                      <button class="reveal-btn text-sm text-blue-600 underline min-h-[44px] px-2">查看答案</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Lessons -->
+          <h2 class="text-xl font-semibold mb-4 mt-8">Recent Lessons</h2>
+          <ul class="space-y-2">
+            {recentPreviews.map(r => (
+              <li>
+                <a href={`${import.meta.env.BASE_URL}lesson/${r.id}`}
+                   class="text-blue-600 hover:underline min-h-[44px] inline-flex items-center">
+                  <span class="text-sm">{r.id} · {r.preview}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   )}
+
+  <script is:inline>
+    // Collapsible sections
+    document.querySelectorAll('.section-block').forEach(function(block) {
+      var btn = block.querySelector('.section-header');
+      var body = block.querySelector('.section-body');
+      var chevron = block.querySelector('.chevron');
+      btn.addEventListener('click', function() {
+        var collapsed = block.dataset.collapsed === 'true';
+        body.style.gridTemplateRows = collapsed ? '1fr' : '0fr';
+        chevron.style.transform = collapsed ? 'rotate(-180deg)' : '';
+        block.dataset.collapsed = collapsed ? 'false' : 'true';
+      });
+    });
+
+    // Reveal answers
+    document.querySelectorAll('.reveal-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var answer = btn.previousElementSibling;
+        answer.classList.remove('hidden');
+        btn.remove();
+      });
+    });
+  </script>
 </Base>

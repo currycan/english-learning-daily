@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: 学习网站
-status: Ready to plan
-stopped_at: Completed 02-astro-foundation Plan 02 (02-02-PLAN.md)
-last_updated: "2026-03-24T08:43:48.278Z"
+status: Ready to execute
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-03-24T10:20:25.647Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-24)
 
 **Core value:** Every day a ready-to-read English lesson lands in git — real content with targeted vocabulary, chunking expressions, and exercises to deepen understanding.
-**Current focus:** Phase 02 — astro-foundation
+**Current focus:** Phase 03 — lesson-reading-experience
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
+Phase: 03 (lesson-reading-experience) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -43,6 +43,7 @@ Plan: Not started
 *Updated after each plan completion*
 | Phase 02-astro-foundation P01 | 6 | 2 tasks | 9 files |
 | Phase 02-astro-foundation P02 | continuation | 2 tasks | 1 files |
+| Phase 03 P01 | 436 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Website-specific decisions (from .planning/website-CONTEXT.md):
 - [Phase 02-astro-foundation]: Tailwind 4 via @tailwindcss/vite Vite plugin; no tailwind.config.js needed
 - [Phase 02-astro-foundation]: render(entry) free function (Astro 5+) used instead of deprecated entry.render() method
 - [Phase 02-astro-foundation]: build-and-deploy job appended to daily-content.yml with needs: generate-content; checkout@v4 required in each job; npm ci for reproducible builds
+- [Phase 03]: TDD approach with 15 comprehensive test cases using real content data
+- [Phase 03]: CSS grid-template-rows animation for collapsible sections instead of max-height
 
 ### Pending Todos
 
@@ -79,6 +82,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-24T08:36:01.250Z
-Stopped at: Completed 02-astro-foundation Plan 02 (02-02-PLAN.md)
+Last session: 2026-03-24T10:20:25.645Z
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None

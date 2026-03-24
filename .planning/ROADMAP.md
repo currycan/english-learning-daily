@@ -89,7 +89,7 @@ Plans:
   4. User can tap the vocabulary, chunking expressions, and comprehension sections independently to expand or collapse each one
   5. User can tap any individual comprehension question to reveal both the English answer and Chinese translation
   6. All text and tap targets on lesson pages are comfortably usable on a phone (body text at least 16px, tap targets at least 44px)
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 - [x] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
 - [ ] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
@@ -141,6 +141,6 @@ Plans:
 | 8. Third-Party Provider Documentation | v1.2 | 1/1 | Complete | 2026-03-23 |
 | 01. Gemini Migration | v1.3 | 2/2 | Complete | 2026-03-24 |
 | 02. Astro Foundation | v2.0 | 2/2 | Complete    | 2026-03-24 |
-| 03. Lesson Reading Experience | v2.0 | 0/? | Not started | - |
+| 03. Lesson Reading Experience | v2.0 | 1/2 | In Progress|  |
 | 04. Archive Calendar | v2.0 | 0/? | Not started | - |
 | 05. Theme & Polish | v2.0 | 0/? | Not started | - |

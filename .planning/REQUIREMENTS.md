@@ -11,9 +11,9 @@
 
 ### LESS — Lesson Reading Experience
 
-- [ ] **LESS-01**: User can view today's lesson on the homepage (most recent available if today's not yet committed)
-- [ ] **LESS-02**: Homepage shows a list of recent lessons (last 5–7 days) below today's lesson
-- [ ] **LESS-03**: Homepage shows a "今日课文将在中午更新" label when today's content has not yet been committed
+- [x] **LESS-01**: User can view today's lesson on the homepage (most recent available if today's not yet committed)
+- [x] **LESS-02**: Homepage shows a list of recent lessons (last 5–7 days) below today's lesson
+- [x] **LESS-03**: Homepage shows a "今日课文将在中午更新" label when today's content has not yet been committed
 - [ ] **LESS-04**: User can read the full article text on any lesson page
 - [ ] **LESS-05**: User can expand/collapse the vocabulary (📚) section on a lesson page
 - [ ] **LESS-06**: User can expand/collapse the chunking expressions (🔗) section on a lesson page

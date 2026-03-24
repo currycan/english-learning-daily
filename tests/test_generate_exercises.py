@@ -179,8 +179,7 @@ def test_load_config_returns_dict():
     import scripts.generate_exercises as _ge
     config_data = {
         "morning_hour": 7,
-        "ai_provider": "anthropic",
-        "openai_model": "gpt-4o-mini",
+        "gemini_model": "gemini-2.0-flash-lite",
     }
     mock_path = MagicMock()
     mock_path.read_text.return_value = json.dumps(config_data)
@@ -189,7 +188,7 @@ def test_load_config_returns_dict():
         MockPath.return_value.parent.parent.__truediv__.return_value.__truediv__.return_value = mock_path
         result = _ge._load_config()
     assert isinstance(result, dict)
-    assert result["ai_provider"] == "anthropic"
+    assert result["gemini_model"] == "gemini-2.0-flash-lite"
 
 
 def test_load_config_exits_on_missing_file():
@@ -209,18 +208,16 @@ def test_load_config_exits_on_missing_file():
 # ---------------------------------------------------------------------------
 
 
-def test_main_calls_call_ai(capsys):
-    """main() must call call_ai, not call_claude."""
+def test_main_calls_call_gemini(capsys):
+    """main() must call call_gemini with config's gemini_model."""
     valid_envelope_json = json.dumps(VALID_ENVELOPE)
     with patch("scripts.generate_exercises._load_config") as mock_load_cfg, \
-         patch("scripts.generate_exercises.resolve_provider") as mock_resolve, \
-         patch("scripts.generate_exercises.call_ai") as mock_call_ai:
-        mock_load_cfg.return_value = {"ai_provider": "anthropic", "openai_model": "gpt-4o-mini"}
-        mock_resolve.return_value = "anthropic"
-        mock_call_ai.return_value = json.dumps(VALID_EXERCISES)
+         patch("scripts.generate_exercises.call_gemini") as mock_call_gemini:
+        mock_load_cfg.return_value = {"gemini_model": "gemini-2.0-flash-lite"}
+        mock_call_gemini.return_value = json.dumps(VALID_EXERCISES)
         with patch("sys.stdin") as mock_stdin:
             mock_stdin.read.return_value = valid_envelope_json
             ge.main()
-    mock_call_ai.assert_called_once()
-    call_kwargs = mock_call_ai.call_args
-    assert call_kwargs.kwargs.get("provider") == "anthropic" or call_kwargs.args[1] == "anthropic"
+    mock_call_gemini.assert_called_once()
+    call_kwargs = mock_call_gemini.call_args
+    assert call_kwargs.kwargs.get("model") == "gemini-2.0-flash-lite"

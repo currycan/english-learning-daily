@@ -75,7 +75,7 @@ Full archive: `.planning/milestones/v1.3-ROADMAP.md`
   4. The `website/` directory is isolated from Python scripts and the CI build only runs Node steps inside that directory
 **Plans:** 2 plans
 Plans:
-- [ ] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
+- [x] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
 - [ ] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
 
 ### Phase 03: Lesson Reading Experience
@@ -132,7 +132,7 @@ Plans:
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1. Foundation | v1.0 | 2/2 | Complete | 2026-03-22 |
-| 2. RSS Fetch | v1.0 | 2/2 | Complete | 2026-03-22 |
+| 2. RSS Fetch | v1.0 | 1/2 | In Progress|  |
 | 3. AI Pipeline | v1.0 | 3/3 | Complete | 2026-03-23 |
 | 4. Provider Abstraction + OpenAI Integration | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 5. Fallback Logic | v1.1 | 1/1 | Complete | 2026-03-23 |

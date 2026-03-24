@@ -140,7 +140,7 @@ Plans:
 | 7. Custom Endpoint Implementation | v1.2 | 3/3 | Complete | 2026-03-23 |
 | 8. Third-Party Provider Documentation | v1.2 | 1/1 | Complete | 2026-03-23 |
 | 01. Gemini Migration | v1.3 | 2/2 | Complete | 2026-03-24 |
-| 02. Astro Foundation | v2.0 | 2/2 | Complete   | 2026-03-24 |
+| 02. Astro Foundation | v2.0 | 2/2 | Complete    | 2026-03-24 |
 | 03. Lesson Reading Experience | v2.0 | 0/? | Not started | - |
 | 04. Archive Calendar | v2.0 | 0/? | Not started | - |
 | 05. Theme & Polish | v2.0 | 0/? | Not started | - |

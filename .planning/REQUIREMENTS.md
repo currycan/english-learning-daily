@@ -4,8 +4,8 @@
 
 ### SITE — Site Infrastructure & CI/CD
 
-- [ ] **SITE-01**: User can access the learning website at the GitHub Pages default URL
-- [ ] **SITE-02**: Website automatically rebuilds and deploys when a new `content/*.md` file is committed
+- [x] **SITE-01**: User can access the learning website at the GitHub Pages default URL
+- [x] **SITE-02**: Website automatically rebuilds and deploys when a new `content/*.md` file is committed
 - [x] **SITE-03**: Website builds from `content/*.md` files at build time — no runtime API calls
 - [x] **SITE-04**: Astro project lives in a `website/` subdirectory, isolated from Python scripts
 

@@ -57,7 +57,7 @@ Full archive: `.planning/milestones/v1.3-ROADMAP.md`
 
 #### Phase Summary Checklist
 
-- [ ] **Phase 02: Astro Foundation** — Scaffold Astro site wired into CI/CD with content index loading from existing Markdown files
+- [x] **Phase 02: Astro Foundation** — Scaffold Astro site wired into CI/CD with content index loading from existing Markdown files (completed 2026-03-24)
 - [ ] **Phase 03: Lesson Reading Experience** — Homepage and lesson pages with full reading UX: collapsible sections, tap-to-reveal answers, mobile typography
 - [ ] **Phase 04: Archive Calendar** — Calendar view with month navigation, tappable lesson days, and localStorage read/unread indicators
 - [ ] **Phase 05: Theme & Polish** — Dark/light mode with system auto-follow, manual toggle, persistence, and FOUC-free page load
@@ -73,10 +73,10 @@ Full archive: `.planning/milestones/v1.3-ROADMAP.md`
   2. Pushing a new `content/YYYY-MM-DD.md` file triggers a build-and-deploy that completes without errors
   3. The build reads all `content/*.md` files at build time with no runtime API calls and no frontmatter errors
   4. The `website/` directory is isolated from Python scripts and the CI build only runs Node steps inside that directory
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
-- [ ] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
+- [x] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
 
 ### Phase 03: Lesson Reading Experience
 **Goal**: Users can read any lesson in full with structured, collapsible exercise sections and tap-to-reveal answers on mobile
@@ -91,7 +91,7 @@ Plans:
   6. All text and tap targets on lesson pages are comfortably usable on a phone (body text at least 16px, tap targets at least 44px)
 **Plans:** 2 plans
 Plans:
-- [ ] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
+- [x] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
 - [ ] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
 **UI hint**: yes
 
@@ -140,7 +140,7 @@ Plans:
 | 7. Custom Endpoint Implementation | v1.2 | 3/3 | Complete | 2026-03-23 |
 | 8. Third-Party Provider Documentation | v1.2 | 1/1 | Complete | 2026-03-23 |
 | 01. Gemini Migration | v1.3 | 2/2 | Complete | 2026-03-24 |
-| 02. Astro Foundation | v2.0 | 0/2 | Planning | - |
+| 02. Astro Foundation | v2.0 | 2/2 | Complete   | 2026-03-24 |
 | 03. Lesson Reading Experience | v2.0 | 0/? | Not started | - |
 | 04. Archive Calendar | v2.0 | 0/? | Not started | - |
 | 05. Theme & Polish | v2.0 | 0/? | Not started | - |

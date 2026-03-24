@@ -61,5 +61,5 @@ Full archive: `.planning/milestones/v1.2-ROADMAP.md`
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Replace production code, config, and CI with Gemini-only
+- [x] 01-01-PLAN.md — Replace production code, config, and CI with Gemini-only
 - [ ] 01-02-PLAN.md — Rewrite tests and documentation for Gemini

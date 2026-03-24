@@ -73,7 +73,10 @@ Full archive: `.planning/milestones/v1.3-ROADMAP.md`
   2. Pushing a new `content/YYYY-MM-DD.md` file triggers a build-and-deploy that completes without errors
   3. The build reads all `content/*.md` files at build time with no runtime API calls and no frontmatter errors
   4. The `website/` directory is isolated from Python scripts and the CI build only runs Node steps inside that directory
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
+- [ ] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
 
 ### Phase 03: Lesson Reading Experience
 **Goal**: Users can read any lesson in full with structured, collapsible exercise sections and tap-to-reveal answers on mobile
@@ -86,7 +89,10 @@ Full archive: `.planning/milestones/v1.3-ROADMAP.md`
   4. User can tap the vocabulary, chunking expressions, and comprehension sections independently to expand or collapse each one
   5. User can tap any individual comprehension question to reveal both the English answer and Chinese translation
   6. All text and tap targets on lesson pages are comfortably usable on a phone (body text at least 16px, tap targets at least 44px)
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
+- [ ] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
 **UI hint**: yes
 
 ### Phase 04: Archive Calendar
@@ -100,7 +106,10 @@ Full archive: `.planning/milestones/v1.3-ROADMAP.md`
   4. Days without lesson content are visually distinct (greyed out) and cannot be tapped
   5. When a user opens a lesson page, that date is automatically saved to localStorage — no explicit action required
   6. Calendar day cells display a visual read indicator for dates recorded in localStorage
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
+- [ ] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
 **UI hint**: yes
 
 ### Phase 05: Theme & Polish
@@ -112,7 +121,10 @@ Full archive: `.planning/milestones/v1.3-ROADMAP.md`
   2. User can tap a theme toggle on any page to switch between dark and light mode
   3. User's manual theme selection persists across browser sessions — returning to the site shows the previously chosen mode
   4. A user with dark mode active sees no flash of light background before the dark theme loads on any page
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 02-01-PLAN.md — Scaffold Astro project with Tailwind 4, Content Collections, lesson list homepage, and stub lesson pages
+- [ ] 02-02-PLAN.md — Add build-and-deploy CI/CD job to daily-content.yml and verify live GitHub Pages deployment
 **UI hint**: yes
 
 ## Progress
@@ -128,7 +140,7 @@ Full archive: `.planning/milestones/v1.3-ROADMAP.md`
 | 7. Custom Endpoint Implementation | v1.2 | 3/3 | Complete | 2026-03-23 |
 | 8. Third-Party Provider Documentation | v1.2 | 1/1 | Complete | 2026-03-23 |
 | 01. Gemini Migration | v1.3 | 2/2 | Complete | 2026-03-24 |
-| 02. Astro Foundation | v2.0 | 0/? | Not started | - |
+| 02. Astro Foundation | v2.0 | 0/2 | Planning | - |
 | 03. Lesson Reading Experience | v2.0 | 0/? | Not started | - |
 | 04. Archive Calendar | v2.0 | 0/? | Not started | - |
 | 05. Theme & Polish | v2.0 | 0/? | Not started | - |

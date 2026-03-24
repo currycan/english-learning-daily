@@ -52,3 +52,14 @@ Full archive: `.planning/milestones/v1.2-ROADMAP.md`
 | 6. AI Provider Documentation | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 7. Custom Endpoint Implementation | v1.2 | 3/3 | Complete | 2026-03-23 |
 | 8. Third-Party Provider Documentation | v1.2 | 1/1 | Complete | 2026-03-23 |
+
+### Phase 1: Gemini Migration
+
+**Goal:** Replace all Claude/OpenAI code, config, CI, tests, and docs with Gemini-only implementation using google-genai SDK
+**Requirements**: TBD
+**Depends on:** Phase 0
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Replace production code, config, and CI with Gemini-only
+- [ ] 01-02-PLAN.md — Rewrite tests and documentation for Gemini

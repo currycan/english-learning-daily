@@ -235,7 +235,7 @@ const articleParagraphs = sections ? processArticleText(sections.article) : [];
           <ul class="space-y-2">
             {recentPreviews.map(r => (
               <li>
-                <a href={`${import.meta.env.BASE_URL}lesson/${r.id}`}
+                <a href={`${import.meta.env.BASE_URL}/lesson/${r.id}`}
                    class="text-blue-600 hover:underline min-h-[44px] inline-flex items-center">
                   <span class="text-sm">{r.id} · {r.preview}</span>
                 </a>

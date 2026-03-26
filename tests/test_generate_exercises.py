@@ -1,3 +1,4 @@
+import copy
 import json
 import sys
 from unittest.mock import patch, MagicMock
@@ -221,3 +222,25 @@ def test_main_calls_call_gemini(capsys):
     mock_call_gemini.assert_called_once()
     call_kwargs = mock_call_gemini.call_args
     assert call_kwargs.kwargs.get("model") == "gemini-2.5-flash-lite"
+
+
+# ---------------------------------------------------------------------------
+# IPA rendering tests
+# ---------------------------------------------------------------------------
+
+
+def test_render_markdown_ipa_present():
+    """IPA 字段存在时，应渲染在 (pos) 之后、（chinese）之前。"""
+    exercises = copy.deepcopy(VALID_EXERCISES)
+    exercises["vocabulary"][0]["ipa"] = "/trɛnd/"
+    result = ge.render_markdown(VALID_ENVELOPE, exercises)
+    assert "/trɛnd/" in result
+    assert "(verb) /trɛnd/ （适应）" in result
+
+
+def test_render_markdown_ipa_absent():
+    """IPA 字段缺失时，结果中不应出现 'None'，词汇行格式应正确。"""
+    exercises = copy.deepcopy(VALID_EXERCISES)
+    result = ge.render_markdown(VALID_ENVELOPE, exercises)
+    assert "None" not in result
+    assert "(verb) （适应）" in result

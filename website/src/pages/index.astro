@@ -1,7 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { parseSections, extractSourceUrl, extractPreview, parseComprehension, getTodayShanghai } from '../lib/lesson-parser';
+import AIAssistant from '../components/AIAssistant.astro';
+import { parseSections, extractSourceUrl, extractPreview, parseComprehension, getTodayShanghai, annotateArticle } from '../lib/lesson-parser';
 
 const entries = await getCollection('lessons');
 const lessons = entries.sort((a, b) => b.id.localeCompare(a.id));
@@ -17,86 +18,54 @@ const recentLessons = lessons
   .filter(l => l.id !== featuredLesson?.id)
   .slice(0, 5);
 
-// Parse featured lesson sections
 const sections = featuredLesson ? parseSections(featuredLesson.body ?? '') : null;
 const sourceUrl = sections ? extractSourceUrl(sections.article) : null;
 
-// Build recent lesson previews
 const recentPreviews = recentLessons.map(l => {
   const s = parseSections(l.body ?? '');
   return { id: l.id, preview: extractPreview(s.article, 60) };
 });
 
-// Parse vocabulary entries from sections.vocabulary
 function parseVocabEntries(vocabularyText: string) {
   const entries = [];
   if (!vocabularyText.trim()) return entries;
-
-  // Split by lines that start with ** (vocabulary entries)
   const lines = vocabularyText.split('\n');
   let currentEntry = null;
-
   for (const line of lines) {
     if (line.startsWith('**') && line.includes('**') && line.includes('(') && line.includes(')')) {
-      // Parse: **word** (pos) （chinese）— definition
       const match = line.match(/\*\*(.*?)\*\*\s*\((.*?)\)\s*（(.*?)）\s*—\s*(.*)/);
       if (match) {
-        currentEntry = {
-          word: match[1],
-          pos: match[2],
-          chinese: match[3],
-          definition: match[4],
-          quote: ''
-        };
+        currentEntry = { word: match[1], pos: match[2], chinese: match[3], definition: match[4], quote: '' };
         entries.push(currentEntry);
       }
     } else if (line.startsWith('>') && currentEntry) {
-      // Extract quote text
       currentEntry.quote = line.replace(/^>\s*"?/, '').replace(/"?\s*$/, '');
     }
   }
-
   return entries;
 }
 
-// Parse expression entries from sections.expressions
 function parseExpressionEntries(expressionsText: string) {
   const entries = [];
   if (!expressionsText.trim()) return entries;
-
-  // Split into blocks by lines that start with **
   const blocks = expressionsText.split(/(?=\*\*[^*]+\*\*\s*（)/);
-
   for (const block of blocks) {
     if (!block.trim()) continue;
-
     const lines = block.trim().split('\n');
     const headerMatch = lines[0]?.match(/\*\*(.*?)\*\*\s*（(.*?)）/);
-
     if (headerMatch) {
       const phrase = headerMatch[1];
       const chinese = headerMatch[2];
       const explanation = [];
       const examples = [];
-
       for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
-        if (line.startsWith('-')) {
-          examples.push(line.substring(1).trim());
-        } else if (line && !line.startsWith('**')) {
-          explanation.push(line);
-        }
+        if (line.startsWith('-')) { examples.push(line.substring(1).trim()); }
+        else if (line && !line.startsWith('**')) { explanation.push(line); }
       }
-
-      entries.push({
-        phrase,
-        chinese,
-        explanation: explanation.join(' '),
-        examples
-      });
+      entries.push({ phrase, chinese, explanation: explanation.join(' '), examples });
     }
   }
-
   return entries;
 }
 
@@ -104,75 +73,95 @@ const vocabEntries = sections ? parseVocabEntries(sections.vocabulary) : [];
 const expressionEntries = sections ? parseExpressionEntries(sections.expressions) : [];
 const qaBlocks = sections ? parseComprehension(sections.comprehension) : [];
 
-// Process article text for display (remove metadata lines)
-function processArticleText(articleText: string): string {
-  if (!articleText) return '';
-
+function processArticleText(articleText: string): string[] {
+  if (!articleText) return [];
   return articleText
     .split('\n\n')
     .filter(para => para.trim())
-    .filter(para => !para.match(/^\d{2}-\d{2}-\d{4}/)) // Skip timestamp
-    .filter(para => !para.startsWith('> Source:')) // Skip source line
-    .filter(para => !para.startsWith('Difficult words:')) // Skip metadata
-    .filter(para => !para.startsWith('You can watch')) // Skip metadata
-    .filter(para => !para.startsWith('The post')) // Skip metadata
+    .filter(para => !para.match(/^\d{2}-\d{2}-\d{4}/))
+    .filter(para => !para.startsWith('> Source:'))
+    .filter(para => !para.startsWith('Difficult words:'))
+    .filter(para => !para.startsWith('You can watch'))
+    .filter(para => !para.startsWith('The post'))
     .map(para => para.trim())
     .filter(para => para.length > 0);
 }
 
 const articleParagraphs = sections ? processArticleText(sections.article) : [];
+const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
 ---
 
 <Base title="English Learning Daily">
   {lessons.length === 0 ? (
-    <div>
-      <h2 class="text-xl font-semibold">No lessons yet</h2>
-      <p class="mt-2">Lessons appear here once content is committed to the repository.</p>
+    <div class="empty-state">
+      <div class="empty-state-icon">📖</div>
+      <div class="empty-state-title">暂无课文</div>
+      <div class="empty-state-desc">内容提交后将在此显示</div>
     </div>
   ) : (
     <div>
       {showNoticeBar && (
-        <div class="bg-yellow-200 text-yellow-900 px-4 py-3 rounded text-sm mb-4">
-          ⚠️ 今日课文将在中午更新
+        <div class="notice-bar">
+          <span class="notice-bar-icon">⏰</span>
+          今日课文将在中午更新，当前显示最新一篇
         </div>
       )}
 
       {featuredLesson && (
         <div>
-          <h1 class="text-[28px] font-semibold leading-tight mb-6">{featuredLesson.id}</h1>
-
-          <!-- Article Text -->
-          <div class="mb-8">
-            {articleParagraphs.map(paragraph => (
-              <p class="mb-4">{paragraph}</p>
-            ))}
+          <!-- Lesson header -->
+          <div class="lesson-header">
+            <div class="lesson-date-row">
+              <span class={`lesson-date-tag${hasTodayLesson ? ' is-today' : ''}`}>
+                {hasTodayLesson ? '✦ 今日课文' : '最新课文'} · {featuredLesson.id}
+              </span>
+            </div>
           </div>
 
-          <!-- Source Link -->
-          {sourceUrl && (
-            <a href={sourceUrl} target="_blank" rel="noopener noreferrer"
-               class="text-blue-600 text-sm underline inline-block mb-8">
-              阅读原文 →
-            </a>
-          )}
+          <!-- Article card -->
+          <div class="card card-padding" style="margin-bottom: 12px;">
+            <div class="link-toggle-row">
+              <button class="anno-btn btn-link" data-hide="linking">⌣ 连读</button>
+              <button class="anno-btn btn-stress" data-hide="stress">ˈ 重音</button>
+              <button class="anno-btn btn-tone" data-hide="intonation">↗↘ 语调</button>
+            </div>
+            <div class="article-body">
+              {articleParagraphs.map(paragraph => (
+                <p set:html={annotateArticle(paragraph)} />
+              ))}
+            </div>
+            {sourceUrl && (
+              <a href={sourceUrl} target="_blank" rel="noopener noreferrer" class="source-link">
+                阅读原文 <span>→</span>
+              </a>
+            )}
+          </div>
 
           <!-- Vocabulary Section -->
-          <div class="section-block mb-4" data-collapsed="true">
-            <button class="section-header w-full text-left py-3 flex items-center justify-between min-h-[44px] text-xl font-semibold">
-              <span>📚 词汇 / Vocabulary</span>
-              <span class="chevron transition-transform duration-200">▼</span>
+          <div class="section-block" data-collapsed="true">
+            <button class="section-header">
+              <div class="section-header-left">
+                <span class="section-icon vocab-icon">📚</span>
+                <span class="section-title">词汇 / Vocabulary</span>
+                {vocabEntries.length > 0 && (
+                  <span class="section-count">{vocabEntries.length}</span>
+                )}
+              </div>
+              <span class="section-chevron">▼</span>
             </button>
-            <div class="section-body grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 0fr">
-              <div class="overflow-hidden">
-                <div class="pt-4">
+            <div class="section-body" style="grid-template-rows: 0fr">
+              <div class="section-body-inner">
+                <div class="section-content">
                   {vocabEntries.map(entry => (
-                    <div class="border-l-4 border-blue-300 pl-3 py-2 mb-3 bg-gray-50 rounded-r">
-                      <div class="font-semibold">
-                        {entry.word} <span class="font-normal text-sm text-gray-500">({entry.pos})</span> <span class="text-sm">（{entry.chinese}）</span>
+                    <div class="vocab-entry">
+                      <div class="vocab-word-row">
+                        <span class="vocab-word">{entry.word}</span>
+                        <span class="vocab-pos">{entry.pos}</span>
+                        <span class="vocab-zh">（{entry.chinese}）</span>
                       </div>
-                      <div class="text-sm mt-1">{entry.definition}</div>
+                      <div class="vocab-def">{entry.definition}</div>
                       {entry.quote && (
-                        <div class="text-xs text-gray-500 mt-1 italic">"{entry.quote}"</div>
+                        <div class="vocab-quote">"{entry.quote}"</div>
                       )}
                     </div>
                   ))}
@@ -182,23 +171,36 @@ const articleParagraphs = sections ? processArticleText(sections.article) : [];
           </div>
 
           <!-- Expressions Section -->
-          <div class="section-block mb-4" data-collapsed="true">
-            <button class="section-header w-full text-left py-3 flex items-center justify-between min-h-[44px] text-xl font-semibold">
-              <span>🔗 表达 / Chunking Expressions</span>
-              <span class="chevron transition-transform duration-200">▼</span>
+          <div class="section-block" data-collapsed="true">
+            <button class="section-header">
+              <div class="section-header-left">
+                <span class="section-icon expr-icon">🔗</span>
+                <span class="section-title">表达 / Chunking Expressions</span>
+                {expressionEntries.length > 0 && (
+                  <span class="section-count">{expressionEntries.length}</span>
+                )}
+              </div>
+              <span class="section-chevron">▼</span>
             </button>
-            <div class="section-body grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 0fr">
-              <div class="overflow-hidden">
-                <div class="pt-4">
+            <div class="section-body" style="grid-template-rows: 0fr">
+              <div class="section-body-inner">
+                <div class="section-content">
                   {expressionEntries.map(entry => (
-                    <div class="py-2 mb-3 bg-gray-50 rounded px-3">
-                      <div class="font-semibold">
-                        {entry.phrase} <span class="text-sm">（{entry.chinese}）</span>
+                    <div class="expr-entry">
+                      <div class="expr-phrase-row">
+                        <span class="expr-phrase">{entry.phrase}</span>
+                        <span class="expr-zh">（{entry.chinese}）</span>
                       </div>
-                      <div class="text-sm mt-1">{entry.explanation}</div>
-                      {entry.examples.map(example => (
-                        <div class="text-sm text-gray-600 mt-1">- {example}</div>
-                      ))}
+                      {entry.explanation && (
+                        <div class="expr-explanation">{entry.explanation}</div>
+                      )}
+                      {entry.examples.length > 0 && (
+                        <ul class="expr-examples">
+                          {entry.examples.map(example => (
+                            <li>{example}</li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -207,22 +209,33 @@ const articleParagraphs = sections ? processArticleText(sections.article) : [];
           </div>
 
           <!-- Comprehension Section -->
-          <div class="section-block mb-4" data-collapsed="true">
-            <button class="section-header w-full text-left py-3 flex items-center justify-between min-h-[44px] text-xl font-semibold">
-              <span>❓ 理解 / Comprehension</span>
-              <span class="chevron transition-transform duration-200">▼</span>
+          <div class="section-block" data-collapsed="true">
+            <button class="section-header">
+              <div class="section-header-left">
+                <span class="section-icon qa-icon">❓</span>
+                <span class="section-title">理解 / Comprehension</span>
+                {qaBlocks.length > 0 && (
+                  <span class="section-count">{qaBlocks.length}</span>
+                )}
+              </div>
+              <span class="section-chevron">▼</span>
             </button>
-            <div class="section-body grid transition-[grid-template-rows] duration-300 ease-out" style="grid-template-rows: 0fr">
-              <div class="overflow-hidden">
-                <div class="pt-4">
-                  {qaBlocks.map(qa => (
-                    <div class="qa-block mb-4">
-                      <p class="font-semibold mb-2">{qa.question}</p>
-                      <div class="answer hidden">
-                        <p class="text-sm mt-1">{qa.answerEn}</p>
-                        <p class="text-sm text-gray-500 mt-1">{qa.answerZh}</p>
+            <div class="section-body" style="grid-template-rows: 0fr">
+              <div class="section-body-inner">
+                <div class="section-content">
+                  {qaBlocks.map((qa, i) => (
+                    <div class="qa-block">
+                      <div class="qa-question">
+                        <span class="qa-question-num">{i + 1}</span>
+                        <span>{qa.question}</span>
                       </div>
-                      <button class="reveal-btn text-sm text-blue-600 underline min-h-[44px] px-2">查看答案</button>
+                      <div class="answer hidden">
+                        <div class="qa-answer">
+                          <div class="qa-answer-en">{qa.answerEn}</div>
+                          <div class="qa-answer-zh">{qa.answerZh}</div>
+                        </div>
+                      </div>
+                      <button class="reveal-btn">查看答案 ↓</button>
                     </div>
                   ))}
                 </div>
@@ -231,42 +244,58 @@ const articleParagraphs = sections ? processArticleText(sections.article) : [];
           </div>
 
           <!-- Recent Lessons -->
-          <h2 class="text-xl font-semibold mb-4 mt-8">Recent Lessons</h2>
-          <ul class="space-y-2">
-            {recentPreviews.map(r => (
-              <li>
-                <a href={`${import.meta.env.BASE_URL}/lesson/${r.id}`}
-                   class="text-blue-600 hover:underline min-h-[44px] inline-flex items-center">
-                  <span class="text-sm">{r.id} · {r.preview}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+          {recentPreviews.length > 0 && (
+            <div>
+              <div class="section-label">近期课文</div>
+              <div class="recent-list">
+                {recentPreviews.map(r => (
+                  <a href={`${base}/lesson/${r.id}`} class="recent-item">
+                    <span class="recent-date">{r.id}</span>
+                    <span class="recent-preview">{r.preview}</span>
+                    <span class="recent-arrow">›</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
   )}
 
+  {featuredLesson && (
+    <AIAssistant
+      articleContent={sections?.article ?? ''}
+      vocabWords={vocabEntries.map(e => e.word)}
+      base={base}
+    />
+  )}
+
   <script is:inline>
-    // Collapsible sections
     document.querySelectorAll('.section-block').forEach(function(block) {
       var btn = block.querySelector('.section-header');
       var body = block.querySelector('.section-body');
-      var chevron = block.querySelector('.chevron');
       btn.addEventListener('click', function() {
         var collapsed = block.dataset.collapsed === 'true';
         body.style.gridTemplateRows = collapsed ? '1fr' : '0fr';
-        chevron.style.transform = collapsed ? 'rotate(-180deg)' : '';
         block.dataset.collapsed = collapsed ? 'false' : 'true';
       });
     });
 
-    // Reveal answers
     document.querySelectorAll('.reveal-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var answer = btn.previousElementSibling;
         answer.classList.remove('hidden');
         btn.remove();
+      });
+    });
+
+    // Annotation toggles
+    document.querySelectorAll('.anno-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.dataset.hide;
+        var isOff = btn.classList.toggle('is-off');
+        document.body.classList.toggle('hide-' + key, isOff);
       });
     });
   </script>

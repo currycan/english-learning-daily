@@ -1,0 +1,364 @@
+---
+interface Props {
+  articleContent: string;
+  vocabWords: string[];
+  base: string;
+}
+
+const { articleContent, vocabWords, base } = Astro.props;
+const apiPath = `${base}/api/ai`;
+---
+
+<!-- Selection Tooltip -->
+<div class="selection-tooltip" id="ai-selection-tooltip">
+  <button class="selection-tooltip-btn" id="ai-analyze-btn">
+    <span>🔍</span> 解析
+  </button>
+</div>
+
+<!-- FAB -->
+<button class="ai-fab" id="ai-fab" aria-label="AI 助手">
+  <span class="ai-fab-icon">✦</span>
+  <span class="ai-fab-label">AI</span>
+</button>
+
+<!-- Overlay -->
+<div class="ai-overlay" id="ai-overlay"></div>
+
+<!-- Panel -->
+<div class="ai-panel" id="ai-panel">
+  <div class="ai-panel-header">
+    <div class="ai-panel-title">
+      <span class="ai-panel-icon">✦</span>
+      AI 学习助手
+    </div>
+    <button class="ai-panel-close" id="ai-panel-close">✕</button>
+  </div>
+
+  <div class="ai-tabs">
+    <button class="ai-tab active" data-tab="chat">💬 对话</button>
+    <button class="ai-tab" data-tab="analyze">🔍 解析</button>
+    <button class="ai-tab" data-tab="practice">✏️ 练习</button>
+  </div>
+
+  <!-- Chat Tab -->
+  <div class="ai-tab-content active" data-content="chat">
+    <div class="ai-messages" id="ai-chat-messages">
+      <div class="ai-message ai-message-bot">
+        <div class="ai-message-bubble">
+          你好！我是你的AI学习助手。有关于这篇文章的任何问题，都可以问我 📚
+        </div>
+      </div>
+    </div>
+    <div class="ai-input-row">
+      <textarea
+        class="ai-input"
+        id="ai-chat-input"
+        placeholder="问我任何关于文章的问题..."
+        rows="2"
+      ></textarea>
+      <button class="ai-send-btn" id="ai-chat-send">
+        <span>↑</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Analyze Tab -->
+  <div class="ai-tab-content" data-content="analyze">
+    <div class="ai-analyze-hint" id="ai-analyze-hint">
+      <div class="ai-analyze-hint-icon">👆</div>
+      <div>在文章中选中单词或句子<br>点击弹出的「解析」按钮</div>
+    </div>
+    <div class="ai-analyze-result hidden" id="ai-analyze-result">
+      <div class="ai-analyze-selection" id="ai-analyze-selection-text"></div>
+      <div class="ai-analyze-content" id="ai-analyze-content"></div>
+    </div>
+    <div class="ai-loading hidden" id="ai-analyze-loading">
+      <div class="ai-loading-dot"></div>
+      <div class="ai-loading-dot"></div>
+      <div class="ai-loading-dot"></div>
+    </div>
+  </div>
+
+  <!-- Practice Tab -->
+  <div class="ai-tab-content" data-content="practice">
+    <div class="ai-practice-idle" id="ai-practice-idle">
+      <p class="ai-practice-desc">基于今日文章，生成一个写作练习题</p>
+      <button class="ai-practice-gen-btn" id="ai-practice-gen">
+        生成练习题 ✦
+      </button>
+    </div>
+    <div class="ai-practice-active hidden" id="ai-practice-active">
+      <div class="ai-practice-prompt" id="ai-practice-prompt"></div>
+      <textarea
+        class="ai-practice-input"
+        id="ai-practice-user-input"
+        placeholder="用英文写下你的回答..."
+        rows="4"
+      ></textarea>
+      <div class="ai-practice-actions">
+        <button class="ai-practice-submit-btn" id="ai-practice-submit">
+          提交获得反馈 ↑
+        </button>
+        <button class="ai-practice-reset-btn" id="ai-practice-reset">
+          换一题
+        </button>
+      </div>
+      <div class="ai-practice-feedback hidden" id="ai-practice-feedback"></div>
+    </div>
+    <div class="ai-loading hidden" id="ai-practice-loading">
+      <div class="ai-loading-dot"></div>
+      <div class="ai-loading-dot"></div>
+      <div class="ai-loading-dot"></div>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ articleContent, vocabWords, apiPath }}>
+(function() {
+  // ── State ───────────────────────────────────────────────
+  var chatHistory = [];
+  var currentSelection = '';
+  var practicePromptText = '';
+
+  // ── Elements ────────────────────────────────────────────
+  var fab = document.getElementById('ai-fab');
+  var overlay = document.getElementById('ai-overlay');
+  var panel = document.getElementById('ai-panel');
+  var closeBtn = document.getElementById('ai-panel-close');
+  var tabs = document.querySelectorAll('.ai-tab');
+  var tabContents = document.querySelectorAll('.ai-tab-content');
+  var selectionTooltip = document.getElementById('ai-selection-tooltip');
+  var analyzeBtn = document.getElementById('ai-analyze-btn');
+
+  // ── Panel open/close ─────────────────────────────────────
+  function openPanel(tab) {
+    panel.classList.add('open');
+    overlay.classList.add('open');
+    if (tab) switchTab(tab);
+  }
+  function closePanel() {
+    panel.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+
+  fab.addEventListener('click', function() { openPanel('chat'); });
+  closeBtn.addEventListener('click', closePanel);
+  overlay.addEventListener('click', closePanel);
+
+  // ── Tab switching ────────────────────────────────────────
+  function switchTab(name) {
+    tabs.forEach(function(t) {
+      t.classList.toggle('active', t.dataset.tab === name);
+    });
+    tabContents.forEach(function(c) {
+      c.classList.toggle('active', c.dataset.content === name);
+    });
+  }
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() { switchTab(tab.dataset.tab); });
+  });
+
+  // ── API call helper ──────────────────────────────────────
+  async function callAI(payload) {
+    var res = await fetch(apiPath, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error('请求失败 ' + res.status);
+    var data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data.content;
+  }
+
+  // ── Chat ─────────────────────────────────────────────────
+  var chatMessages = document.getElementById('ai-chat-messages');
+  var chatInput = document.getElementById('ai-chat-input');
+  var chatSend = document.getElementById('ai-chat-send');
+
+  function appendMessage(role, text) {
+    var div = document.createElement('div');
+    div.className = 'ai-message ' + (role === 'user' ? 'ai-message-user' : 'ai-message-bot');
+    var bubble = document.createElement('div');
+    bubble.className = 'ai-message-bubble';
+    bubble.textContent = text;
+    div.appendChild(bubble);
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return bubble;
+  }
+
+  function appendThinking() {
+    var div = document.createElement('div');
+    div.className = 'ai-message ai-message-bot';
+    div.id = 'ai-thinking';
+    div.innerHTML = '<div class="ai-message-bubble ai-thinking"><span></span><span></span><span></span></div>';
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function removeThinking() {
+    var el = document.getElementById('ai-thinking');
+    if (el) el.remove();
+  }
+
+  async function sendChat() {
+    var text = chatInput.value.trim();
+    if (!text) return;
+    chatInput.value = '';
+    chatSend.disabled = true;
+
+    appendMessage('user', text);
+    appendThinking();
+
+    try {
+      var reply = await callAI({
+        action: 'chat',
+        articleContent: articleContent,
+        message: text,
+        history: chatHistory,
+      });
+      removeThinking();
+      appendMessage('model', reply);
+      chatHistory.push({ role: 'user', text: text });
+      chatHistory.push({ role: 'model', text: reply });
+      // Keep history manageable
+      if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+    } catch (e) {
+      removeThinking();
+      appendMessage('model', '抱歉，出错了：' + e.message);
+    }
+    chatSend.disabled = false;
+  }
+
+  chatSend.addEventListener('click', sendChat);
+  chatInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendChat();
+    }
+  });
+
+  // ── Text selection & analyze ─────────────────────────────
+  var analyzeHint = document.getElementById('ai-analyze-hint');
+  var analyzeResult = document.getElementById('ai-analyze-result');
+  var analyzeSelText = document.getElementById('ai-analyze-selection-text');
+  var analyzeContent = document.getElementById('ai-analyze-content');
+  var analyzeLoading = document.getElementById('ai-analyze-loading');
+
+  document.addEventListener('selectionchange', function() {
+    var sel = window.getSelection();
+    var text = sel ? sel.toString().trim() : '';
+    if (text.length < 1 || text.length > 300) {
+      selectionTooltip.classList.remove('visible');
+      return;
+    }
+    currentSelection = text;
+    var range = sel.getRangeAt(0);
+    var rect = range.getBoundingClientRect();
+    selectionTooltip.style.left = (rect.left + rect.width / 2 - 36) + 'px';
+    selectionTooltip.style.top = (rect.top + window.scrollY - 40) + 'px';
+    selectionTooltip.classList.add('visible');
+  });
+
+  document.addEventListener('mousedown', function(e) {
+    if (!selectionTooltip.contains(e.target)) {
+      selectionTooltip.classList.remove('visible');
+    }
+  });
+
+  analyzeBtn.addEventListener('click', function() {
+    selectionTooltip.classList.remove('visible');
+    openPanel('analyze');
+    doAnalyze(currentSelection);
+  });
+
+  async function doAnalyze(text) {
+    analyzeHint.classList.add('hidden');
+    analyzeResult.classList.add('hidden');
+    analyzeLoading.classList.remove('hidden');
+
+    try {
+      var result = await callAI({
+        action: 'analyze',
+        selection: text,
+        articleContent: articleContent,
+      });
+      analyzeLoading.classList.add('hidden');
+      analyzeSelText.textContent = '"' + text + '"';
+      analyzeContent.textContent = result;
+      analyzeResult.classList.remove('hidden');
+    } catch (e) {
+      analyzeLoading.classList.add('hidden');
+      analyzeSelText.textContent = '"' + text + '"';
+      analyzeContent.textContent = '解析失败：' + e.message;
+      analyzeResult.classList.remove('hidden');
+    }
+  }
+
+  // ── Practice ─────────────────────────────────────────────
+  var practiceIdle = document.getElementById('ai-practice-idle');
+  var practiceActive = document.getElementById('ai-practice-active');
+  var practicePromptEl = document.getElementById('ai-practice-prompt');
+  var practiceInput = document.getElementById('ai-practice-user-input');
+  var practiceSubmit = document.getElementById('ai-practice-submit');
+  var practiceReset = document.getElementById('ai-practice-reset');
+  var practiceFeedback = document.getElementById('ai-practice-feedback');
+  var practiceLoading = document.getElementById('ai-practice-loading');
+  var practiceGen = document.getElementById('ai-practice-gen');
+
+  practiceGen.addEventListener('click', async function() {
+    practiceIdle.classList.add('hidden');
+    practiceLoading.classList.remove('hidden');
+
+    try {
+      var prompt = await callAI({
+        action: 'practice_prompt',
+        articleContent: articleContent,
+        vocabWords: vocabWords,
+      });
+      practiceLoading.classList.add('hidden');
+      practicePromptText = prompt;
+      practicePromptEl.textContent = prompt;
+      practiceInput.value = '';
+      practiceFeedback.classList.add('hidden');
+      practiceActive.classList.remove('hidden');
+    } catch (e) {
+      practiceLoading.classList.add('hidden');
+      practiceIdle.classList.remove('hidden');
+      alert('生成失败：' + e.message);
+    }
+  });
+
+  practiceReset.addEventListener('click', function() {
+    practiceActive.classList.add('hidden');
+    practiceIdle.classList.remove('hidden');
+  });
+
+  practiceSubmit.addEventListener('click', async function() {
+    var userText = practiceInput.value.trim();
+    if (!userText) return;
+    practiceSubmit.disabled = true;
+
+    practiceFeedback.classList.add('hidden');
+    practiceLoading.classList.remove('hidden');
+
+    try {
+      var feedback = await callAI({
+        action: 'practice_feedback',
+        practicePrompt: practicePromptText,
+        userResponse: userText,
+      });
+      practiceLoading.classList.add('hidden');
+      practiceFeedback.textContent = feedback;
+      practiceFeedback.classList.remove('hidden');
+    } catch (e) {
+      practiceLoading.classList.add('hidden');
+      practiceFeedback.textContent = '反馈获取失败：' + e.message;
+      practiceFeedback.classList.remove('hidden');
+    }
+    practiceSubmit.disabled = false;
+  });
+})();
+</script>

@@ -163,7 +163,7 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
                     <div class="vocab-entry">
                       <div class="vocab-word-row">
                         <span class="vocab-word">{entry.word}</span>
-                        <button class="audio-btn audio-icon" data-src={`/audio/${featuredLesson.id}/vocab_${toSlug(entry.word)}.mp3`}>🔊</button>
+                        <button class="audio-btn audio-icon" data-src={`/audio/${featuredLesson.id}/vocab_${toSlug(entry.word)}.mp3`} aria-label={`播放 ${entry.word} 发音`}>🔊</button>
                         <span class="vocab-pos">{entry.pos}</span>
                         {entry.ipa && <span class="vocab-ipa">/{entry.ipa}/</span>}
                         <span class="vocab-zh">（{entry.chinese}）</span>
@@ -172,7 +172,7 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
                       {entry.quote && (
                         <div class="vocab-quote">
                           "{entry.quote}"
-                          <button class="audio-btn audio-icon" data-src={`/audio/${featuredLesson.id}/vocab_${toSlug(entry.word)}_ex.mp3`}>🔊</button>
+                          <button class="audio-btn audio-icon" data-src={`/audio/${featuredLesson.id}/vocab_${toSlug(entry.word)}_ex.mp3`} aria-label={`朗读 ${entry.word} 例句`}>🔊</button>
                         </div>
                       )}
                     </div>
@@ -328,12 +328,21 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
           activeAudioBtn.textContent = activeAudioBtn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
         }
         sharedAudio.src = src;
-        sharedAudio.play();
+        sharedAudio.play().catch(function() {
+          btn.textContent = btn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
+          activeAudioBtn = null;
+        });
         btn.textContent = btn.classList.contains('audio-icon') ? '⏸' : '⏸ 暂停';
         activeAudioBtn = btn;
         sharedAudio.onended = function() {
           btn.textContent = btn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
           activeAudioBtn = null;
+        };
+        sharedAudio.onerror = function() {
+          if (activeAudioBtn) {
+            activeAudioBtn.textContent = activeAudioBtn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
+            activeAudioBtn = null;
+          }
         };
       });
     });

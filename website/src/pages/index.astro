@@ -33,9 +33,9 @@ function parseVocabEntries(vocabularyText: string) {
   let currentEntry = null;
   for (const line of lines) {
     if (line.startsWith('**') && line.includes('**') && line.includes('(') && line.includes(')')) {
-      const match = line.match(/\*\*(.*?)\*\*\s*\((.*?)\)\s*（(.*?)）\s*—\s*(.*)/);
+      const match = line.match(/\*\*(.*?)\*\*\s*\((.*?)\)\s*(?:\/([^/]+)\/)?\s*（(.*?)）\s*—\s*(.*)/);
       if (match) {
-        currentEntry = { word: match[1], pos: match[2], chinese: match[3], definition: match[4], quote: '' };
+        currentEntry = { word: match[1], pos: match[2], ipa: match[3] || '', chinese: match[4], definition: match[5], quote: '' };
         entries.push(currentEntry);
       }
     } else if (line.startsWith('>') && currentEntry) {
@@ -43,6 +43,10 @@ function parseVocabEntries(vocabularyText: string) {
     }
   }
   return entries;
+}
+
+function toSlug(word: string): string {
+  return word.toLowerCase().replace(/[^a-z0-9]/g, '_');
 }
 
 function parseExpressionEntries(expressionsText: string) {
@@ -120,6 +124,9 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
 
           <!-- Article card -->
           <div class="card card-padding" style="margin-bottom: 12px;">
+            <div class="article-audio-bar">
+              <button class="audio-btn" data-src={`/audio/${featuredLesson.id}/article.mp3`}>🔊 朗读全文</button>
+            </div>
             <div class="link-toggle-row">
               <button class="anno-btn btn-link" data-hide="linking">⌣ 连读</button>
               <button class="anno-btn btn-stress" data-hide="stress">ˈ 重音</button>
@@ -156,12 +163,17 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
                     <div class="vocab-entry">
                       <div class="vocab-word-row">
                         <span class="vocab-word">{entry.word}</span>
+                        <button class="audio-btn audio-icon" data-src={`/audio/${featuredLesson.id}/vocab_${toSlug(entry.word)}.mp3`}>🔊</button>
                         <span class="vocab-pos">{entry.pos}</span>
+                        {entry.ipa && <span class="vocab-ipa">/{entry.ipa}/</span>}
                         <span class="vocab-zh">（{entry.chinese}）</span>
                       </div>
                       <div class="vocab-def">{entry.definition}</div>
                       {entry.quote && (
-                        <div class="vocab-quote">"{entry.quote}"</div>
+                        <div class="vocab-quote">
+                          "{entry.quote}"
+                          <button class="audio-btn audio-icon" data-src={`/audio/${featuredLesson.id}/vocab_${toSlug(entry.word)}_ex.mp3`}>🔊</button>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -296,6 +308,33 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
         var key = btn.dataset.hide;
         var isOff = btn.classList.toggle('is-off');
         document.body.classList.toggle('hide-' + key, isOff);
+      });
+    });
+
+    // Audio playback
+    var sharedAudio = new Audio();
+    var activeAudioBtn = null;
+    document.querySelectorAll('.audio-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var src = btn.dataset.src;
+        if (!src) return;
+        if (activeAudioBtn === btn && !sharedAudio.paused) {
+          sharedAudio.pause();
+          btn.textContent = btn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
+          activeAudioBtn = null;
+          return;
+        }
+        if (activeAudioBtn) {
+          activeAudioBtn.textContent = activeAudioBtn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
+        }
+        sharedAudio.src = src;
+        sharedAudio.play();
+        btn.textContent = btn.classList.contains('audio-icon') ? '⏸' : '⏸ 暂停';
+        activeAudioBtn = btn;
+        sharedAudio.onended = function() {
+          btn.textContent = btn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
+          activeAudioBtn = null;
+        };
       });
     });
   </script>

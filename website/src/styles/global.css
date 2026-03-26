@@ -62,8 +62,8 @@
   --radius-full:      9999px;
 
   /* Spacing */
-  --page-max-width:   720px;
-  --page-padding:     16px;
+  --page-max-width:   960px;
+  --page-padding:     20px;
   --card-padding:     28px;
 
   /* Typography */
@@ -192,7 +192,14 @@ body::before {
 .page-main {
   max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: 24px var(--page-padding) 64px;
+  padding: 24px var(--page-padding) 80px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-padding: 32px;
+    --card-padding: 36px;
+  }
 }
 
 /* ── Notice Bar ──────────────────────────────────────────────── */

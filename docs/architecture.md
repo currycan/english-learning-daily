@@ -125,9 +125,9 @@ client = anthropic.Anthropic()       # module level — hard to mock
 
 ### Immutability / 不可变性
 
-`state.json` mutations always use `copy.deepcopy`. `apply_command()` in `mark_done.py` never modifies its input argument.
+`state.json` mutations always use `copy.deepcopy`.
 
-`state.json` 的修改始终使用 `copy.deepcopy`。`mark_done.py` 中的 `apply_command()` 从不修改其输入参数。
+`state.json` 的修改始终使用 `copy.deepcopy`。
 
 ---
 
@@ -157,8 +157,6 @@ study-all/
 │   │                       # 晚间推送内容构建
 │   ├── push_bark.py        # Bark API client
 │   │                       # Bark API 客户端
-│   └── mark_done.py        # CLI: record block completion
-│                           # CLI：记录模块完成情况
 ├── content/                # Generated lesson files (git-committed)
 │   └── YYYY-MM-DD.md       # 已生成的课程文件（已提交到 git）
 ├── tests/                  # Pytest unit tests

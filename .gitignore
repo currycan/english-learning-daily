@@ -33,3 +33,6 @@ htmlcov/
 # Secrets (never commit)
 .env
 *.env.local
+
+# tmp files
+tmp/

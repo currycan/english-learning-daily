@@ -6,9 +6,9 @@
 
 ## `plan/state.json` — Learning State / 学习状态
 
-**Single source of truth** for the push notification system. Written by `mark_done.py` after each completion event.
+**Single source of truth** for the push notification system.
 
-推送通知系统的**唯一数据源**。每次记录完成情况后由 `mark_done.py` 写入。
+推送通知系统的**唯一数据源**。
 
 ```json
 {

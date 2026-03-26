@@ -264,30 +264,3 @@ python -m scripts.generate_task | python -m scripts.push_bark
 
 需要 `BARK_TOKEN` 环境变量（在 GitHub Secret 中设置）。
 
----
-
-### `scripts/mark_done.py`
-
-CLI tool to record daily learning block completion. Updates and commits `state.json`.
-
-记录每日学习模块完成情况的 CLI 工具。更新并提交 `state.json`。
-
-**Usage / 用法：**
-
-```bash
-python -m scripts.mark_done review       # mark review block complete / 标记复习完成
-python -m scripts.mark_done input        # mark input block complete / 标记听力完成
-python -m scripts.mark_done extraction   # mark extraction block complete / 标记阅读完成
-python -m scripts.mark_done output       # mark output block complete / 标记输出完成
-python -m scripts.mark_done all          # mark all blocks complete / 标记全部完成
-python -m scripts.mark_done skip         # mark today as skipped / 标记今日跳过
-python -m scripts.mark_done rating 4     # submit scene rating 1–5 / 提交场景评分 1–5
-```
-
-**Important / 重要：** Always run from project root using `-m` so `scripts/` is importable.
-
-始终从项目根目录使用 `-m` 运行，以确保 `scripts/` 可被导入。
-
-**Immutability guarantee / 不可变性保证：** `apply_command()` never modifies its input. It always returns a new deep-copied state.
-
-`apply_command()` 从不修改其输入参数。始终返回深拷贝后的新状态。

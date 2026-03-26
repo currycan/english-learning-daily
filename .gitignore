@@ -36,3 +36,6 @@ htmlcov/
 
 # tmp files
 tmp/
+
+# Git worktrees
+.worktrees/

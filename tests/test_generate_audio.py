@@ -96,3 +96,96 @@ class TestWordToSlug:
 
     def test_simple_word(self):
         assert word_to_slug("species") == "species"
+
+
+import asyncio
+from datetime import date
+from pathlib import Path
+from unittest.mock import patch, AsyncMock, MagicMock, call
+from scripts.generate_audio import generate_all, git_commit_audio, word_to_slug, AUDIO_DIR
+
+
+class TestGenerateAll:
+    """Tests for generate_all() — mocks edge_tts.Communicate to avoid network calls."""
+
+    def test_creates_article_and_vocab_audio_paths(self, tmp_path):
+        """generate_all returns paths for article + vocab + examples."""
+        content = SAMPLE_CONTENT
+        today = date(2026, 3, 26)
+
+        with patch("scripts.generate_audio.AUDIO_DIR", tmp_path), \
+             patch("scripts.generate_audio._generate_mp3", new_callable=AsyncMock) as mock_mp3:
+            paths = asyncio.run(generate_all(today, content))
+
+        assert len(paths) > 0
+        path_names = [p.name for p in paths]
+        assert "article.mp3" in path_names
+        assert any(n.startswith("vocab_") and not n.endswith("_ex.mp3") for n in path_names)
+        assert any(n.endswith("_ex.mp3") for n in path_names)
+
+    def test_warns_when_no_article_text(self, tmp_path, capsys):
+        """generate_all prints warning to stderr when article section is missing."""
+        content = "## 📚 词汇 / Vocabulary\n\n**word** (noun) （释义）— def\n> \"example\"\n"
+        today = date(2026, 3, 26)
+
+        with patch("scripts.generate_audio.AUDIO_DIR", tmp_path), \
+             patch("scripts.generate_audio._generate_mp3", new_callable=AsyncMock):
+            paths = asyncio.run(generate_all(today, content))
+
+        captured = capsys.readouterr()
+        assert "WARNING" in captured.err
+
+    def test_skips_example_audio_when_no_example(self, tmp_path):
+        """generate_all does not create _ex.mp3 when vocab entry has no example."""
+        content = """\
+## 📖 文章 / Article
+
+Some article text here.
+
+## 📚 词汇 / Vocabulary
+
+**trend** (noun) /trɛnd/ （趋势）— a direction
+"""
+        today = date(2026, 3, 26)
+
+        with patch("scripts.generate_audio.AUDIO_DIR", tmp_path), \
+             patch("scripts.generate_audio._generate_mp3", new_callable=AsyncMock):
+            paths = asyncio.run(generate_all(today, content))
+
+        path_names = [p.name for p in paths]
+        assert not any(n.endswith("_ex.mp3") for n in path_names)
+
+
+class TestGitCommitAudio:
+    """Tests for git_commit_audio() — mocks subprocess.run."""
+
+    def test_adds_and_commits_all_paths(self):
+        """git_commit_audio calls git add for each path and then commits."""
+        paths = [Path("/repo/audio/article.mp3"), Path("/repo/audio/vocab_trend.mp3")]
+        date_str = "2026-03-26"
+
+        with patch("subprocess.run") as mock_run:
+            mock_run.return_value = MagicMock(returncode=0)
+            git_commit_audio(paths, date_str)
+
+        calls = mock_run.call_args_list
+        # Should have: N git add + 1 git commit + 1 git push
+        add_calls = [c for c in calls if c.args[0][0:2] == ['git', 'add']]
+        commit_calls = [c for c in calls if c.args[0][0:2] == ['git', 'commit']]
+        push_calls = [c for c in calls if c.args[0] == ['git', 'push']]
+
+        assert len(add_calls) == len(paths)
+        assert len(commit_calls) == 1
+        assert f"audio {date_str}" in commit_calls[0].args[0][-1]
+        assert len(push_calls) == 1
+
+    def test_exits_on_subprocess_failure(self):
+        """git_commit_audio calls sys.exit(1) when subprocess raises CalledProcessError."""
+        import subprocess
+        paths = [Path("/repo/audio/article.mp3")]
+
+        with patch("subprocess.run", side_effect=subprocess.CalledProcessError(1, "git")), \
+             pytest.raises(SystemExit) as exc_info:
+            git_commit_audio(paths, "2026-03-26")
+
+        assert exc_info.value.code == 1

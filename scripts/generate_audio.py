@@ -76,6 +76,8 @@ async def generate_all(today: date, content: str) -> list[Path]:
         path = audio_dir / "article.mp3"
         tasks.append(_generate_mp3(article_text, path))
         paths.append(path)
+    else:
+        print("WARNING: No article text found, skipping article audio", file=sys.stderr)
 
     for entry in parse_vocab_entries(content):
         slug = word_to_slug(entry['word'])

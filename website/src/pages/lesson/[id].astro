@@ -98,9 +98,6 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
 
   <!-- Article card -->
   <div class="card card-padding" style="margin-bottom: 12px;">
-    <div class="article-audio-bar">
-      <button class="audio-btn" data-src={`/audio/${lesson.id}/article.mp3`}>🔊 朗读全文</button>
-    </div>
     <div class="link-toggle-row">
       <button class="anno-btn btn-link" data-hide="linking">⌣ 连读</button>
       <button class="anno-btn btn-stress" data-hide="stress">ˈ 重音</button>

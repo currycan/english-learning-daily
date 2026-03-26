@@ -22,7 +22,8 @@ def build_prompt(envelope: dict) -> str:
 Given the article below, return a JSON object with three keys: "vocabulary", "chunks", "questions".
 
 RULES:
-- vocabulary: array of 5-8 objects. Each: word (str), part_of_speech (str), chinese_meaning (str), \
+- vocabulary: array of 5-8 objects. Each: word (str), ipa (str, IPA pronunciation enclosed in /.../, e.g. /trɛnd/), \
+part_of_speech (str), chinese_meaning (str), \
 definition (str, plain English simpler than the word itself, B1-B2 level), \
 example (str, direct verbatim quote from the article containing the word). \
 Select exactly 5 to 8 vocabulary words. You MUST return at least 5.
@@ -81,8 +82,9 @@ def render_markdown(envelope: dict, exercises: dict) -> str:
     lines.append("## 📚 词汇 / Vocabulary")
     lines.append("")
     for item in exercises["vocabulary"]:
+        ipa_part = f" {item['ipa']}" if item.get('ipa') else ''
         lines.append(
-            f"**{item['word']}** ({item['part_of_speech']}) （{item['chinese_meaning']}）"
+            f"**{item['word']}** ({item['part_of_speech']}){ipa_part} （{item['chinese_meaning']}）"
             f"— {item['definition']}"
         )
         lines.append(f"> \"{item['example']}\"")

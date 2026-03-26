@@ -42,3 +42,16 @@ jobs:
           python -m scripts.feed_article | \
           python -m scripts.generate_exercises | \
           python -m scripts.commit_content
+
+      - name: Generate audio
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          set -eo pipefail
+          AUDIO_DIR="website/public/audio/$(python -c \
+            "from scripts.content_utils import get_beijing_date; print(get_beijing_date())")"
+          if [ -d "$AUDIO_DIR" ] && [ -f "$AUDIO_DIR/article.mp3" ]; then
+            echo "Audio for today already exists — skipping."
+            exit 0
+          fi
+          python -m scripts.generate_audio

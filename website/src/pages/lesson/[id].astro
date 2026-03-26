@@ -105,6 +105,8 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
       <button class="anno-btn btn-link" data-hide="linking">⌣ 连读</button>
       <button class="anno-btn btn-stress" data-hide="stress">ˈ 重音</button>
       <button class="anno-btn btn-tone" data-hide="intonation">↗↘ 语调</button>
+      <button class="anno-btn btn-tts" id="tts-play-btn">▶ 朗读</button>
+      <button class="anno-btn btn-tts" id="tts-stop-btn" style="display:none">⏹</button>
     </div>
     <div class="article-body">
       {articleParagraphs.map(paragraph => (
@@ -141,6 +143,7 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
                 <span class="vocab-pos">{entry.pos}</span>
                 {entry.ipa && <span class="vocab-ipa">/{entry.ipa}/</span>}
                 <span class="vocab-zh">（{entry.chinese}）</span>
+                <button class="tts-word-btn" data-word={entry.word} aria-label={`朗读 ${entry.word}`}>🔊</button>
               </div>
               <div class="vocab-def">{entry.definition}</div>
               {entry.quote && (
@@ -265,7 +268,7 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
     })();
 
     // Annotation toggles
-    document.querySelectorAll('.anno-btn').forEach(function(btn) {
+    document.querySelectorAll('.anno-btn[data-hide]').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var key = btn.dataset.hide;
         var isOff = btn.classList.toggle('is-off');
@@ -273,40 +276,109 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, '') || '';
       });
     });
 
-    // Audio playback
-    var sharedAudio = new Audio();
-    var activeAudioBtn = null;
-    document.querySelectorAll('.audio-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var src = btn.dataset.src;
-        if (!src) return;
-        if (activeAudioBtn === btn && !sharedAudio.paused) {
-          sharedAudio.pause();
-          btn.textContent = btn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
-          activeAudioBtn = null;
-          return;
-        }
-        if (activeAudioBtn) {
-          activeAudioBtn.textContent = activeAudioBtn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
-        }
-        sharedAudio.src = src;
-        sharedAudio.play().catch(function() {
-          btn.textContent = btn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
-          activeAudioBtn = null;
+    // ── TTS ──────────────────────────────────────────────────────
+    (function() {
+      if (!window.speechSynthesis) return;
+
+      var playBtn = document.getElementById('tts-play-btn');
+      var stopBtn = document.getElementById('tts-stop-btn');
+      var synth = window.speechSynthesis;
+
+      var ttsState = 'idle';
+      var segments = [];
+      var currentIdx = 0;
+
+      function buildSegments() {
+        var result = [];
+        document.querySelectorAll('.article-body p').forEach(function(p) {
+          result.push({ text: p.textContent.trim(), el: p });
         });
-        btn.textContent = btn.classList.contains('audio-icon') ? '⏸' : '⏸ 暂停';
-        activeAudioBtn = btn;
-        sharedAudio.onended = function() {
-          btn.textContent = btn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
-          activeAudioBtn = null;
+        document.querySelectorAll('.vocab-word').forEach(function(w) {
+          result.push({ text: w.textContent.trim(), el: null });
+        });
+        return result.filter(function(s) { return s.text.length > 0; });
+      }
+
+      function clearHighlight() {
+        document.querySelectorAll('.tts-active').forEach(function(el) {
+          el.classList.remove('tts-active');
+        });
+      }
+
+      function speakAt(idx) {
+        if (idx >= segments.length) { resetState(); return; }
+        currentIdx = idx;
+        var seg = segments[idx];
+        if (seg.el) {
+          clearHighlight();
+          seg.el.classList.add('tts-active');
+          seg.el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        var utt = new SpeechSynthesisUtterance(seg.text);
+        utt.lang = 'en-US';
+        utt.rate = 0.9;
+        utt.onend = function() {
+          if (ttsState === 'playing') speakAt(currentIdx + 1);
         };
-        sharedAudio.onerror = function() {
-          if (activeAudioBtn) {
-            activeAudioBtn.textContent = activeAudioBtn.classList.contains('audio-icon') ? '🔊' : '🔊 朗读全文';
-            activeAudioBtn = null;
-          }
-        };
+        synth.speak(utt);
+      }
+
+      function resetState() {
+        synth.cancel();
+        clearHighlight();
+        ttsState = 'idle';
+        currentIdx = 0;
+        segments = [];
+        playBtn.textContent = '▶ 朗读';
+        playBtn.classList.remove('is-playing');
+        stopBtn.style.display = 'none';
+      }
+
+      function startPlaying() {
+        segments = buildSegments();
+        currentIdx = 0;
+        ttsState = 'playing';
+        playBtn.textContent = '⏸ 暂停';
+        playBtn.classList.add('is-playing');
+        stopBtn.style.display = '';
+        speakAt(0);
+      }
+
+      playBtn.addEventListener('click', function() {
+        if (ttsState === 'idle') {
+          startPlaying();
+        } else if (ttsState === 'playing') {
+          synth.pause();
+          ttsState = 'paused';
+          playBtn.textContent = '▶ 继续';
+          playBtn.classList.remove('is-playing');
+        } else if (ttsState === 'paused') {
+          synth.resume();
+          ttsState = 'playing';
+          playBtn.textContent = '⏸ 暂停';
+          playBtn.classList.add('is-playing');
+        }
       });
-    });
+
+      stopBtn.addEventListener('click', resetState);
+
+      document.querySelectorAll('.tts-word-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var word = btn.dataset.word;
+          if (!word) return;
+          if (ttsState === 'playing') {
+            synth.pause();
+            ttsState = 'paused';
+            playBtn.textContent = '▶ 继续';
+            playBtn.classList.remove('is-playing');
+          }
+          synth.cancel();
+          var utt = new SpeechSynthesisUtterance(word);
+          utt.lang = 'en-US';
+          utt.rate = 0.85;
+          synth.speak(utt);
+        });
+      });
+    })();
   </script>
 </Base>

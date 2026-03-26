@@ -346,6 +346,36 @@ body::before {
   border-color: var(--border-default);
 }
 
+.anno-btn.btn-tts {
+  background: rgba(111, 66, 193, 0.08);
+  color: #6F42C1;
+  border-color: rgba(111, 66, 193, 0.25);
+}
+.anno-btn.btn-tts:hover { background: rgba(111, 66, 193, 0.14); }
+.anno-btn.btn-tts.is-playing {
+  background: rgba(111, 66, 193, 0.15);
+  border-color: #6F42C1;
+}
+
+.tts-active {
+  background: rgba(255, 220, 60, 0.18);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.tts-word-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 3px;
+  opacity: 0.45;
+  line-height: 1;
+  vertical-align: middle;
+  transition: opacity 0.15s;
+}
+.tts-word-btn:hover { opacity: 0.9; }
+
 /* ── Linking annotation ──────────────────────────────────────── */
 .linked-words {
   color: var(--brand-primary);

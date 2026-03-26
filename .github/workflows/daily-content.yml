@@ -42,34 +42,3 @@ jobs:
           python -m scripts.feed_article | \
           python -m scripts.generate_exercises | \
           python -m scripts.commit_content
-
-  build-and-deploy:
-    needs: generate-content
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Install website dependencies
-        working-directory: ./website
-        run: npm ci
-
-      - name: Build Astro site
-        working-directory: ./website
-        run: npm run build
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./website/dist
-
-      - uses: actions/deploy-pages@v4
-        id: deploy

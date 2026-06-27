@@ -2,7 +2,7 @@ name: Evening push
 
 on:
   schedule:
-    - cron: '0 13 * * *'   # 13:00 UTC = 21:00 BJT (UTC+8)
+    - cron: '0 15 * * *'   # 15:00 UTC = 23:00 BJT (UTC+8)
   workflow_dispatch:         # Allow manual trigger for testing
 
 env:

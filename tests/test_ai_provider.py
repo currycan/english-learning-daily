@@ -122,3 +122,55 @@ def test_no_call_claude():
 
 def test_no_call_openai():
     assert not hasattr(ap, "call_openai")
+
+
+# ---------------------------------------------------------------------------
+# Retry behaviour (transient error handling)
+# ---------------------------------------------------------------------------
+
+
+def test_call_gemini_retries_transient_then_succeeds():
+    with patch("scripts.ai_provider.genai.Client") as MockClient, \
+            patch("scripts.ai_provider.time.sleep") as mock_sleep:
+        mock_client = MagicMock()
+        MockClient.return_value = mock_client
+        mock_client.models.generate_content.side_effect = [
+            Exception("503 UNAVAILABLE. high demand"),
+            MagicMock(text="recovered"),
+        ]
+        result = ap.call_gemini("prompt", api_key="key")
+    assert result == "recovered"
+    assert mock_client.models.generate_content.call_count == 2
+    assert mock_sleep.called
+
+
+def test_call_gemini_does_not_retry_non_transient():
+    with patch("scripts.ai_provider.genai.Client") as MockClient, \
+            patch("scripts.ai_provider.time.sleep") as mock_sleep:
+        mock_client = MagicMock()
+        MockClient.return_value = mock_client
+        mock_client.models.generate_content.side_effect = Exception("API error")
+        with pytest.raises(ap.ProviderError):
+            ap.call_gemini("prompt", api_key="key")
+    assert mock_client.models.generate_content.call_count == 1
+    assert not mock_sleep.called
+
+
+def test_call_gemini_raises_after_exhausting_transient_retries():
+    with patch("scripts.ai_provider.genai.Client") as MockClient, \
+            patch("scripts.ai_provider.time.sleep"):
+        mock_client = MagicMock()
+        MockClient.return_value = mock_client
+        mock_client.models.generate_content.side_effect = Exception("503 UNAVAILABLE")
+        with pytest.raises(ap.ProviderError):
+            ap.call_gemini("prompt", api_key="key")
+    assert mock_client.models.generate_content.call_count == ap.MAX_ATTEMPTS
+
+
+def test_call_gemini_raises_on_empty_response():
+    with patch("scripts.ai_provider.genai.Client") as MockClient:
+        mock_client = MagicMock()
+        MockClient.return_value = mock_client
+        mock_client.models.generate_content.return_value = MagicMock(text="")
+        with pytest.raises(ap.ProviderError):
+            ap.call_gemini("prompt", api_key="key")
